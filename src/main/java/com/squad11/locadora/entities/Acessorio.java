@@ -21,6 +21,10 @@ public class Acessorio {
     @Column(name = "descricao")
     private String descricao;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "carro_acessorios",
+            joinColumns = @JoinColumn(name = "acessorio_id"),
+            inverseJoinColumns = @JoinColumn(name = "carro_id"))
     private List<Carro> carros;
 }
