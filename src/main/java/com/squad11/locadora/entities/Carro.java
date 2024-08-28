@@ -30,6 +30,9 @@ public class Carro {
     @OneToMany(mappedBy = "carro")
     private List<Aluguel> alugueis;
 
+    @ManyToMany()
+    private List<Acessorio> acessorios;
+
     public Carro(String chassi, String placa, BigDecimal valorDiaria) {
         this.chassi = chassi;
         this.placa = placa;
