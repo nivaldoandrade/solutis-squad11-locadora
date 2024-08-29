@@ -30,6 +30,11 @@ public class Carro {
     @OneToMany(mappedBy = "carro")
     private List<Aluguel> alugueis;
 
+    @ManyToOne
+    private ModeloCarro modelo;
+
+    private Boolean isDisponivel;
+
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
             name = "carro_acessorios",
@@ -37,9 +42,12 @@ public class Carro {
             inverseJoinColumns = @JoinColumn(name = "acessorio_id"))
     private List<Acessorio> acessorios;
 
-    public Carro(String chassi, String placa, BigDecimal valorDiaria) {
+    public Carro(String chassi, String placa, BigDecimal valorDiaria, ModeloCarro modelo, List<Acessorio> acessorios) {
+
         this.chassi = chassi;
         this.placa = placa;
         this.valorDiaria = valorDiaria;
+        this.modelo = modelo;
+        this.acessorios = acessorios;
     }
 }
