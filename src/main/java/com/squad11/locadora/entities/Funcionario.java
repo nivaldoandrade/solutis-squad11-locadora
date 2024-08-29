@@ -21,8 +21,17 @@ public class Funcionario extends Pessoa {
     @Column(name = "matricula")
     private String matricula;
 
-    public Funcionario(Long id, String nome, LocalDate dataNascimento, String cpf, String email, String matricula) {
-        super(id, nome, dataNascimento, cpf, email);
+    public Funcionario(
+            Long id,
+            String nome,
+            LocalDate dataNascimento,
+            String cpf,
+            String email,
+            SexoEnum sexo,
+            boolean aceitouTermos,
+            String matricula
+    ) {
+        super(id, nome, dataNascimento, cpf, email, sexo, aceitouTermos);
         this.matricula = matricula;
     }
 }
