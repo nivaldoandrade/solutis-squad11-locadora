@@ -27,4 +27,8 @@ public class Acessorio {
             joinColumns = @JoinColumn(name = "acessorio_id"),
             inverseJoinColumns = @JoinColumn(name = "carro_id"))
     private List<Carro> carros;
+
+    public Acessorio(String descricao) {
+        this.descricao = descricao;
+    }
 }
