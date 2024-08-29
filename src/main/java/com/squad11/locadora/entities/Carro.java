@@ -33,6 +33,8 @@ public class Carro {
     @ManyToOne
     private ModeloCarro modelo;
 
+    private Boolean isDisponivel;
+
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
             name = "carro_acessorios",

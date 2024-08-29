@@ -1,5 +1,6 @@
 package com.squad11.locadora.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,10 +23,7 @@ public class Acessorio {
     private String descricao;
 
     @ManyToMany(cascade = CascadeType.MERGE)
-    @JoinTable(
-            name = "carro_acessorios",
-            joinColumns = @JoinColumn(name = "acessorio_id"),
-            inverseJoinColumns = @JoinColumn(name = "carro_id"))
+    @JsonIgnore
     private List<Carro> carros;
 
     public Acessorio(String descricao) {

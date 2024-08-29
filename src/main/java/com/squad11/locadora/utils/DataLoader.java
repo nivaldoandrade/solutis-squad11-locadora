@@ -40,7 +40,7 @@ public class DataLoader implements CommandLineRunner {
         List<String> FabricantesString = List.of(
                 "Ford", "Audi", "BMW", "Honda",
                 "Buggati", "Aston Martin", "McLaren",
-                "Samsung Galaxy", "Tesla", "Henessey", "Koenigsegg"
+                "Samsung Galaxy", "Tesla", "Hennessey", "Koenigsegg"
                 );
 
 
