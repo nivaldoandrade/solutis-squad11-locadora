@@ -16,8 +16,13 @@ public class CarroController {
     private CarroService carroService;
 
     @GetMapping("/disponiveis")
-    public ResponseEntity<List<Carro>> getCarrosDisponiveis() {
-        return ResponseEntity.ok().body(carroService.findAll());
+    public ResponseEntity<?> getCarrosDisponiveis(
+            @RequestParam(required = false) List<String> categorias
+    ) {
+
+        List<Carro> carros = carroService.findAll(categorias);
+
+        return ResponseEntity.ok().body(carros);
     }
 
     @GetMapping("/disponiveis/{id}")

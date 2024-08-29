@@ -19,7 +19,9 @@ public class ModeloCarro {
     private Long id;
 
     private String descricao;
-    CategoriaEnum categoria;
+
+    @Enumerated(EnumType.STRING)
+    private CategoriaEnum categoria;
 
     @ManyToOne
     private Fabricante fabricante;
