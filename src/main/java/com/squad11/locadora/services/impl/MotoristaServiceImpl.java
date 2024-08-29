@@ -2,9 +2,12 @@ package com.squad11.locadora.services.impl;
 
 import com.squad11.locadora.dtos.CreateMotoristaDTO;
 import com.squad11.locadora.entities.Motorista;
-import com.squad11.locadora.exceptions.EmailAlreadyInUseException;
+import com.squad11.locadora.entities.SexoEnum;
+import com.squad11.locadora.exceptions.NumeroCNHAlreadyInUseException;
 import com.squad11.locadora.repositories.MotoristaRepository;
+import com.squad11.locadora.services.CadastroPendenteService;
 import com.squad11.locadora.services.MotoristaService;
+import com.squad11.locadora.services.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,26 +19,44 @@ public class MotoristaServiceImpl implements MotoristaService {
     @Autowired
     private MotoristaRepository motoristaRepository;
 
+    @Autowired
+    private CadastroPendenteService cadastroPendenteService;
+
+    @Autowired
+    private PessoaService pessoaService;
+
     @Override
-    public Motorista create(CreateMotoristaDTO createMotoristaDTO) {
+    public String create(CreateMotoristaDTO createMotoristaDTO) {
 
-        Optional<Motorista> contactByEmailExists = motoristaRepository.findByEmail(
-                createMotoristaDTO.email()
-        );
+        pessoaService.validateEmailUniqueness(createMotoristaDTO.email(), null);
 
-        if(contactByEmailExists.isPresent()) {
-            throw new EmailAlreadyInUseException();
-        }
+        pessoaService.validateCPFUniqueness(createMotoristaDTO.cpf(), null);
 
-        Motorista newMotorista = CreateMotoristaDTO.to(createMotoristaDTO);
+        validateNumeroCNHUniqueness(createMotoristaDTO.numeroCNH());
 
-        return motoristaRepository.save(newMotorista);
+        SexoEnum sexo = SexoEnum.fromString(createMotoristaDTO.sexo());
 
+        Motorista newMotorista = CreateMotoristaDTO.to(createMotoristaDTO, sexo);
 
-//        Contact newContact = CreateContactRequest.to(contact, photoName, categoryExists);
-//
-//        return contactRepository.save(newContact);
+        newMotorista = motoristaRepository.save(newMotorista);
 
+        String token = cadastroPendenteService.createToken(newMotorista.getId());
 
+        return token;
     }
+
+    private void validateNumeroCNHUniqueness(String numeroCNH) {
+        validateNumeroCNHUniqueness(numeroCNH, null);
+    }
+
+    private void validateNumeroCNHUniqueness(String numeroCNH, Long existingMotoristaId) {
+        Optional<Motorista> motoristaByNumeroCNHExists = motoristaRepository.findByNumeroCNH(numeroCNH);
+
+        motoristaByNumeroCNHExists.ifPresent((c) -> {
+            if(!c.getId().equals(existingMotoristaId)) {
+                throw new NumeroCNHAlreadyInUseException();
+            }
+        });
+    }
+
 }

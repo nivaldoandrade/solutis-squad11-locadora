@@ -20,8 +20,22 @@ import java.util.Objects;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(EmailAlreadyInUseException.class)
-    public ResponseEntity<RestErrorResponse> handleEmailAlreadyInUse(EmailAlreadyInUseException e) {
+    @ExceptionHandler(FieldAlreadyInUseException.class)
+    public ResponseEntity<RestErrorResponse> handleFieldAlreadyInUseException(FieldAlreadyInUseException e) {
+        int statusCode = HttpStatus.BAD_REQUEST.value();
+
+        RestErrorResponse error = new RestErrorResponse(
+                statusCode,
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(statusCode).body(error);
+    }
+
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<RestErrorResponse> handleTokenExpiredException(TokenExpiredException e) {
         int statusCode = HttpStatus.BAD_REQUEST.value();
 
         RestErrorResponse error = new RestErrorResponse(

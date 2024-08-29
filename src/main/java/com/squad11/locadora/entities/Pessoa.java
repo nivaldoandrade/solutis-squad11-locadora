@@ -20,15 +20,46 @@ public abstract class Pessoa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nome")
+    @Column(nullable = false)
     private String nome;
 
-    @Column(name = "data_nascimento")
+    @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
 
-    @Column(name = "cpf", unique = true)
+    @Column(unique = true, nullable = false)
     private String cpf;
 
-    @Column(name = "email", unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private SexoEnum sexo;
+
+    @Column(nullable = false)
+    private boolean ativo = false;
+
+    @Column(name = "aceitou_termos", nullable = false)
+    private boolean aceitouTermos;
+
+    public Pessoa(
+            Long id,
+            String nome,
+            LocalDate dataNascimento,
+            String cpf,
+            String email,
+            SexoEnum sexo,
+            Boolean aceitouTermos
+    ) {
+        this.id = id;
+        this.nome = nome;
+        this.dataNascimento = dataNascimento;
+        this.cpf = cpf;
+        this.email = email;
+        this.sexo = sexo;
+        this.aceitouTermos = aceitouTermos;
+    }
+
+    public void ativar() {
+        this.ativo = true;
+    }
 }

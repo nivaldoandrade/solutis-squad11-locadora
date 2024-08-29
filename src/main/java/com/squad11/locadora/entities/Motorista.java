@@ -18,15 +18,24 @@ import java.util.List;
 @NoArgsConstructor
 public class Motorista extends Pessoa {
 
-    @Column()
+    @Column(name = "numero_cnh", nullable = false)
     private String numeroCNH;
 
     @OneToMany(mappedBy = "motorista")
     private List<Aluguel> alugueis;
 
     @Builder
-    public Motorista(Long id, String nome, LocalDate dataNascimento, String cpf, String email, String numeroCNH) {
-        super(id, nome, dataNascimento, cpf, email);
+    public Motorista(
+            Long id,
+            String nome,
+            LocalDate dataNascimento,
+            String cpf,
+            String email,
+            SexoEnum sexo,
+            String numeroCNH,
+            boolean aceitouTermos
+    ) {
+        super(id, nome, dataNascimento, cpf, email, sexo, aceitouTermos);
         this.numeroCNH = numeroCNH;
     }
 }
