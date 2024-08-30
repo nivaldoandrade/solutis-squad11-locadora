@@ -22,9 +22,9 @@ public class Acessorio {
     @Column(name = "descricao")
     private String descricao;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
-    @JsonIgnore
-    private List<Carro> carros;
+//    @ManyToMany(cascade = CascadeType.MERGE)
+//    @JsonIgnore
+//    private List<Carro> carros;
 
     public Acessorio(String descricao) {
         this.descricao = descricao;
