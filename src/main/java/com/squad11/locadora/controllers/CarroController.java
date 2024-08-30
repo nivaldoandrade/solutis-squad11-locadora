@@ -17,10 +17,11 @@ public class CarroController {
 
     @GetMapping("/disponiveis")
     public ResponseEntity<?> getCarrosDisponiveis(
-            @RequestParam(required = false) List<String> categorias
+            @RequestParam(name = "categorias",required = false) List<String> categorias,
+            @RequestParam(name = "acessorios", required = false) List<String> acessorios
     ) {
 
-        List<Carro> carros = carroService.findAll(categorias);
+        List<Carro> carros = carroService.findAll(categorias, acessorios);
 
         return ResponseEntity.ok().body(carros);
     }

@@ -6,12 +6,13 @@ import com.squad11.locadora.exceptions.EntityNotFoundException;
 import com.squad11.locadora.repositories.CarroRepository;
 import com.squad11.locadora.services.CarroService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.squad11.locadora.specifications.CarrosSpecifications.byCategoria;
+import static com.squad11.locadora.specifications.CarrosSpecifications.*;
 
 @Service
 public class CarroServiceImpl implements CarroService {
@@ -20,17 +21,24 @@ public class CarroServiceImpl implements CarroService {
     private CarroRepository carroRepository;
 
     @Override
-    public List<Carro> findAll(List<String> categorias) {
+    public List<Carro> findAll(List<String> categorias, List<String> acessorios) {
 
-        List<CategoriaEnum> categoriaEnums = new ArrayList<>();
+        Specification<Carro> specification = Specification.where(null);
 
-        if(categorias != null)
-            categoriaEnums= categorias.stream()
+        if(categorias != null && !categorias.isEmpty()) {
+            List<CategoriaEnum> categoriaEnums= categorias.stream()
                     .map(CategoriaEnum::fromString)
                     .toList();
 
+            specification = specification.and(byCategorias(categoriaEnums));
+        }
 
-        return carroRepository.findAll(byCategoria(categoriaEnums));
+        if(acessorios != null && !acessorios.isEmpty()) {
+            specification = specification.and(byAcessorios(acessorios));
+        }
+
+
+        return carroRepository.findAll(specification);
     }
 
     @Override
