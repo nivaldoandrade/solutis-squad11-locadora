@@ -3,10 +3,7 @@ package com.squad11.locadora.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.squad11.locadora.entities.PK.CarrinhoCarroPK;
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -36,16 +33,21 @@ public class CarrinhoCarro {
     @Column(name = "valor_total", nullable = false)
     private BigDecimal valorTotal = new BigDecimal(0);
 
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    private Apolice apolice;
+
     public CarrinhoCarro(
             Carrinho carrinho,
             Carro carro,
             LocalDate dataInicio,
-            LocalDate dataTermino
+            LocalDate dataTermino,
+            Apolice apolice
     ) {
         this.id.setCarrinho(carrinho);
         this.id.setCarro(carro);
         this.dataInicio = dataInicio;
         this.dataTermino = dataTermino;
+        this.apolice = apolice;
         this.valorTotal = setValorTotal();
     }
 
@@ -66,8 +68,13 @@ public class CarrinhoCarro {
         this.id.setCarro(carro);
     }
 
+
     public BigDecimal setValorTotal() {
         BigDecimal qte = BigDecimal.valueOf(ChronoUnit.DAYS.between(dataInicio, dataTermino) + 1);
-        return getCarro().getValorDiaria().multiply(qte);
+
+        BigDecimal valorAluguel = getCarro().getValorDiaria().multiply(qte);
+        BigDecimal valorFranquia = this.apolice.getValorFranquia();
+
+        return valorFranquia.add(valorAluguel);
     }
 }

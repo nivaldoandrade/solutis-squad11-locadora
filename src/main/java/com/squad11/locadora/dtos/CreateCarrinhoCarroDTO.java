@@ -15,6 +15,9 @@ public record CreateCarrinhoCarroDTO(
         String dataTermino,
 
         @NotNull(message = "O ID do carro é obrigátorio")
-        Long carroId
+        Long carroId,
+
+        @NotNull(message = "O ID da apólice é obrigátorio")
+        Long apoliceId
 ) {
 }

@@ -16,7 +16,9 @@ public record ResponseCarrinhoCarroDTO(
 
         CarroDTO carro,
 
-        BigDecimal valorTotal
+        BigDecimal valorTotal,
+
+        ApoliceDTO apolice
 ) {
 
     public static ResponseCarrinhoCarroDTO from(CarrinhoCarro carrinhoCarro) {
@@ -26,6 +28,7 @@ public record ResponseCarrinhoCarroDTO(
                 .dataTermino(carrinhoCarro.getDataTermino())
                 .carro( CarroDTO.from(carrinhoCarro.getCarro()))
                 .valorTotal(carrinhoCarro.getValorTotal())
+                .apolice(ApoliceDTO.from(carrinhoCarro.getApolice()))
                 .build();
     }
 }

@@ -2,14 +2,12 @@ package com.squad11.locadora.services.impl;
 
 import com.squad11.locadora.dtos.CreateCarrinhoCarroDTO;
 import com.squad11.locadora.dtos.CreateCarrinhoDTO;
-import com.squad11.locadora.entities.Carrinho;
-import com.squad11.locadora.entities.CarrinhoCarro;
-import com.squad11.locadora.entities.Carro;
-import com.squad11.locadora.entities.Motorista;
+import com.squad11.locadora.entities.*;
 import com.squad11.locadora.exceptions.*;
 import com.squad11.locadora.repositories.CarrinhoCarroRepository;
 import com.squad11.locadora.repositories.CarrinhoRepository;
 import com.squad11.locadora.repositories.CarroRepository;
+import com.squad11.locadora.services.ApoliceService;
 import com.squad11.locadora.services.CarrinhoService;
 import com.squad11.locadora.services.MotoristaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +33,9 @@ public class CarrinhoServiceImpl implements CarrinhoService {
 
     @Autowired
     MotoristaService motoristaService;
+
+    @Autowired
+    ApoliceService apoliceService;
 
     @Override
     public Carrinho show(Long id) {
@@ -121,16 +122,28 @@ public class CarrinhoServiceImpl implements CarrinhoService {
         LocalDate dataInicio = formatStringToDate(carrinhoCarroDTO.dataInicio());
         LocalDate dataTermino = formatStringToDate(carrinhoCarroDTO.dataTermino());
 
+        Long apoliceId = carrinhoCarroDTO.apoliceId();
+
+        Apolice apolice = apoliceService.findById(apoliceId);
+
         Optional<Carro> carro = carroRepository.findById(carrinhoCarroDTO.carroId());
 
         if(carro.isEmpty()) {
             throw new CarNotFoundException();
         }
 
+        Optional<CarrinhoCarro> apoliceEmUso = carrinhoCarroRepository.findByApolice(apolice);
+
+        if(apoliceEmUso.isPresent() && !apoliceEmUso.get().getCarro().equals(carro.get())) {
+            throw new PolicyAlreadyInUseException();
+        }
+
+
         CarrinhoCarro carrinhoCarro = new CarrinhoCarro(
                 carrinho,
                 carro.get(),dataInicio,
-                dataTermino
+                dataTermino,
+                apolice
         );
 
         carrinho.getCarrinhoCarros().add(carrinhoCarro);

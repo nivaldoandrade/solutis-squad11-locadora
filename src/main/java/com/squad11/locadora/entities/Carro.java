@@ -1,5 +1,6 @@
 package com.squad11.locadora.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,7 @@ public class Carro {
     @Column(name = "valor_diario")
     private BigDecimal valorDiaria;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "carro")
     private List<Aluguel> alugueis;
 

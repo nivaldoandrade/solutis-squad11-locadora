@@ -20,7 +20,7 @@ public class Aluguel {
     private Long id;
 
     @Column(name = "data_pedido")
-    private Calendar dataPedido;
+    private LocalDate dataPedido;
 
     @Column(name = "data_entrega")
     private LocalDate dataEntrega;
@@ -36,4 +36,25 @@ public class Aluguel {
 
     @ManyToOne
     private Carro carro;
+
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    private Apolice apolice;
+
+    public Aluguel(
+            LocalDate dataPedido,
+            LocalDate dataEntrega,
+            LocalDate dataDevolucao,
+            BigDecimal valorTotal,
+            Motorista motorista,
+            Carro carro,
+            Apolice apolice
+    ) {
+        this.dataPedido = dataPedido;
+        this.dataEntrega = dataEntrega;
+        this.dataDevolucao = dataDevolucao;
+        this.valorTotal = valorTotal;
+        this.motorista = motorista;
+        this.carro = carro;
+        this.apolice = apolice;
+    }
 }

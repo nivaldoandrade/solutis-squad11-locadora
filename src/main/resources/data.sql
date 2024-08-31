@@ -21,3 +21,20 @@ INSERT INTO carro_acessorios (carro_id, acessorio_id) VALUES (2, 1); -- Carro 2 
 INSERT INTO carro_acessorios (carro_id, acessorio_id) VALUES (2, 3); -- Carro 2 com Freios ABS
 INSERT INTO carro_acessorios (carro_id, acessorio_id) VALUES (3, 2); -- Carro 3 com Airbag
 INSERT INTO carro_acessorios (carro_id, acessorio_id) VALUES (3, 3); -- Carro 3 com Freios ABS
+
+
+-- Inserir uma apólice com valor de franquia de 500 e todas as proteções ativadas
+INSERT INTO apolice (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo)
+VALUES (500.00, TRUE, TRUE, TRUE);
+
+-- Inserir uma apólice com valor de franquia de 1000 e proteções básicas ativadas
+INSERT INTO apolice (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo)
+VALUES (1000.00, TRUE, FALSE, TRUE);
+
+-- Inserir uma apólice com valor de franquia de 200 e apenas proteção contra roubo ativada
+INSERT INTO apolice (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo)
+VALUES (200.00, FALSE, FALSE, TRUE);
+
+-- Inserir uma apólice com valor de franquia de 750 e proteção contra terceiros ativada
+INSERT INTO apolice (valor_franquia, protecao_terceiro, protecao_causas_naturais, protecao_roubo)
+VALUES (750.00, TRUE, FALSE, FALSE);
