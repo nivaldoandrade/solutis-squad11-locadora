@@ -5,6 +5,7 @@ import com.squad11.locadora.entities.Pessoa;
 import com.squad11.locadora.exceptions.CPFAlreadyInUseException;
 import com.squad11.locadora.exceptions.EmailAlreadyInUseException;
 import com.squad11.locadora.exceptions.EntityNotFoundException;
+import com.squad11.locadora.exceptions.PersonNotFoundException;
 import com.squad11.locadora.repositories.PessoaRepository;
 import com.squad11.locadora.services.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class PessoaServiceImpl implements PessoaService {
     @Override
     public Pessoa findById(Long id) {
         Pessoa pessoa = pessoaRepository.findById(id)
-                .orElseThrow(() ->  new EntityNotFoundException(Motorista.class));
+                .orElseThrow(() ->  new PersonNotFoundException());
 
         return pessoa;
     }

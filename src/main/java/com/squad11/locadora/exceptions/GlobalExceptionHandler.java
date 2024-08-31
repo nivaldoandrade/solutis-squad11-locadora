@@ -33,6 +33,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(statusCode).body(error);
     }
 
+    @ExceptionHandler(UnconfirmedRegistrationException.class)
+    public ResponseEntity<RestErrorResponse> handleUnconfirmedRegistrationException(UnconfirmedRegistrationException e) {
+        int statusCode = HttpStatus.BAD_REQUEST.value();
+
+        RestErrorResponse error = new RestErrorResponse(
+                statusCode,
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(statusCode).body(error);
+    }
+
 
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<RestErrorResponse> handleTokenExpiredException(TokenExpiredException e) {

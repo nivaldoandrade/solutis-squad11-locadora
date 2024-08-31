@@ -3,6 +3,8 @@ package com.squad11.locadora.services.impl;
 import com.squad11.locadora.dtos.CreateMotoristaDTO;
 import com.squad11.locadora.entities.Motorista;
 import com.squad11.locadora.entities.SexoEnum;
+import com.squad11.locadora.exceptions.DriverNotFoundException;
+import com.squad11.locadora.exceptions.EntityNotFoundException;
 import com.squad11.locadora.exceptions.NumeroCNHAlreadyInUseException;
 import com.squad11.locadora.repositories.MotoristaRepository;
 import com.squad11.locadora.services.CadastroPendenteService;
@@ -43,6 +45,12 @@ public class MotoristaServiceImpl implements MotoristaService {
         String token = cadastroPendenteService.createToken(newMotorista.getId());
 
         return token;
+    }
+
+    @Override
+    public Motorista findById(Long id) {
+        return motoristaRepository.findById(id)
+                .orElseThrow(DriverNotFoundException::new);
     }
 
     private void validateNumeroCNHUniqueness(String numeroCNH) {
