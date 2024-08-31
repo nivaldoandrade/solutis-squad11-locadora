@@ -3,6 +3,7 @@ package com.squad11.locadora.dtos;
 import com.squad11.locadora.entities.Acessorio;
 import com.squad11.locadora.entities.Carro;
 import com.squad11.locadora.entities.ModeloCarro;
+import com.squad11.locadora.entities.StatusCarroEnum;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -16,6 +17,8 @@ public record CarroDTO(
         String chassi,
 
         String placa,
+
+        StatusCarroEnum status,
 
         BigDecimal valorDiaria,
 
@@ -32,6 +35,7 @@ public record CarroDTO(
                 .id(carro.getId())
                 .chassi(carro.getChassi())
                 .placa(carro.getPlaca())
+                .status(carro.getStatus())
                 .valorDiaria(carro.getValorDiaria())
                 .modelo(ModeloDTO.from(carro.getModelo()))
                 .acessorios(acessorioDTOS)

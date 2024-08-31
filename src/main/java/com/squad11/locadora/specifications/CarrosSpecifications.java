@@ -1,9 +1,6 @@
 package com.squad11.locadora.specifications;
 
-import com.squad11.locadora.entities.Acessorio;
-import com.squad11.locadora.entities.Carro;
-import com.squad11.locadora.entities.CategoriaEnum;
-import com.squad11.locadora.entities.ModeloCarro;
+import com.squad11.locadora.entities.*;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,5 +27,10 @@ public class CarrosSpecifications {
                             .collect(Collectors.toList())
             );
         };
+    }
+
+    public static Specification<Carro> byDisponiveis() {
+        return (root, query, criteriaBuilder) ->
+                root.get("status").in(StatusCarroEnum.DISPONIVEL);
     }
 }

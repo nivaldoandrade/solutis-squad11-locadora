@@ -2,15 +2,14 @@ package com.squad11.locadora.services.impl;
 
 import com.squad11.locadora.dtos.CreateCarrinhoCarroDTO;
 import com.squad11.locadora.dtos.CreateCarrinhoDTO;
-import com.squad11.locadora.entities.Carrinho;
-import com.squad11.locadora.entities.CarrinhoCarro;
-import com.squad11.locadora.entities.Carro;
-import com.squad11.locadora.entities.Motorista;
+import com.squad11.locadora.entities.*;
 import com.squad11.locadora.exceptions.*;
 import com.squad11.locadora.repositories.CarrinhoCarroRepository;
 import com.squad11.locadora.repositories.CarrinhoRepository;
 import com.squad11.locadora.repositories.CarroRepository;
+import com.squad11.locadora.services.ApoliceService;
 import com.squad11.locadora.services.CarrinhoService;
+import com.squad11.locadora.services.CarroService;
 import com.squad11.locadora.services.MotoristaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ import static com.squad11.locadora.utils.DateUtils.formatStringToDate;
 public class CarrinhoServiceImpl implements CarrinhoService {
 
     @Autowired
-    CarroRepository carroRepository;
+    CarroService carroService;
 
     @Autowired
     CarrinhoRepository carrinhoRepository;
@@ -35,6 +34,9 @@ public class CarrinhoServiceImpl implements CarrinhoService {
 
     @Autowired
     MotoristaService motoristaService;
+
+    @Autowired
+    ApoliceService apoliceService;
 
     @Override
     public Carrinho show(Long id) {
@@ -121,16 +123,41 @@ public class CarrinhoServiceImpl implements CarrinhoService {
         LocalDate dataInicio = formatStringToDate(carrinhoCarroDTO.dataInicio());
         LocalDate dataTermino = formatStringToDate(carrinhoCarroDTO.dataTermino());
 
-        Optional<Carro> carro = carroRepository.findById(carrinhoCarroDTO.carroId());
+        Long apoliceId = carrinhoCarroDTO.apoliceId();
 
-        if(carro.isEmpty()) {
-            throw new CarNotFoundException();
+        Apolice apolice = apoliceService.findById(apoliceId);
+
+        Carro carro = carroService.findById(carrinhoCarroDTO.carroId());
+
+        Optional<Carro> existingCarroEmCarrinho = carrinho.getCarrinhoCarros()
+                .stream()
+                .filter(c -> c.getCarro().equals(carro))
+                .map(CarrinhoCarro::getCarro)
+                .findFirst();
+
+        if(existingCarroEmCarrinho.isEmpty() && !carro.getStatus().equals(StatusCarroEnum.DISPONIVEL)) {
+            throw new CarNotAvailableException();
+        }
+
+        Optional<CarrinhoCarro> apoliceEmUso = carrinhoCarroRepository.findByApolice(apolice);
+
+        if (apoliceEmUso.isPresent()) {
+            CarrinhoCarro carrinhoCarro = apoliceEmUso.get();
+
+            boolean apoliceEmUsoPorOutroCarro = !carrinhoCarro.getCarro().equals(carro);
+            boolean carrinhoIncorreto = !carrinhoCarro.getCarrinho().getId().equals(carrinho.getMotorista().getId());
+
+            if (apoliceEmUsoPorOutroCarro || carrinhoIncorreto) {
+                throw new PolicyAlreadyInUseException();
+            }
         }
 
         CarrinhoCarro carrinhoCarro = new CarrinhoCarro(
                 carrinho,
-                carro.get(),dataInicio,
-                dataTermino
+                carro,
+                dataInicio,
+                dataTermino,
+                apolice
         );
 
         carrinho.getCarrinhoCarros().add(carrinhoCarro);

@@ -1,5 +1,6 @@
 package com.squad11.locadora.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class Motorista extends Pessoa {
     @Column(name = "numero_cnh", nullable = false)
     private String numeroCNH;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "motorista")
     private List<Aluguel> alugueis;
 
