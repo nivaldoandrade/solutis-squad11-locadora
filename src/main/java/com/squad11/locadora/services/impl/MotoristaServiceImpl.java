@@ -1,18 +1,22 @@
 package com.squad11.locadora.services.impl;
 
 import com.squad11.locadora.dtos.CreateMotoristaDTO;
+import com.squad11.locadora.entities.Aluguel;
 import com.squad11.locadora.entities.Motorista;
 import com.squad11.locadora.entities.SexoEnum;
 import com.squad11.locadora.exceptions.DriverNotFoundException;
 import com.squad11.locadora.exceptions.EntityNotFoundException;
 import com.squad11.locadora.exceptions.NumeroCNHAlreadyInUseException;
+import com.squad11.locadora.repositories.AluguelRepository;
 import com.squad11.locadora.repositories.MotoristaRepository;
+import com.squad11.locadora.services.AluguelService;
 import com.squad11.locadora.services.CadastroPendenteService;
 import com.squad11.locadora.services.MotoristaService;
 import com.squad11.locadora.services.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,6 +30,16 @@ public class MotoristaServiceImpl implements MotoristaService {
 
     @Autowired
     private PessoaService pessoaService;
+
+    @Autowired
+    AluguelRepository aluguelRepository;
+
+    @Override
+    public List<Aluguel> showAlugueis(Long motoristaId) {
+        Motorista motorista = this.findById(motoristaId);
+
+        return aluguelRepository.findAllByMotorista(motorista);
+    }
 
     @Override
     public String create(CreateMotoristaDTO createMotoristaDTO) {

@@ -45,11 +45,7 @@ public class AluguelServiceImpl implements AluguelService {
 
         carrinho.getCarrinhoCarros().forEach(c -> {
             Apolice apolice = apoliceService.findById(c.getApolice().getId());
-            Carro carro = carroService.findById(c.getCarro().getId());
-
-            if(carro.getStatus().equals(StatusCarroEnum.RESERVADO)) {
-                throw new CarNotAvailableForRentalException();
-            }
+            checkAvailabilityForRental(c.getCarro().getId());
 
             Aluguel aluguel = new Aluguel();
             aluguel.setMotorista(motorista);
@@ -75,6 +71,8 @@ public class AluguelServiceImpl implements AluguelService {
     public void payment(Long aluguelId) {
         Aluguel aluguel = this.findById(aluguelId);
 
+        checkAvailabilityForRental(aluguel.getCarro().getId());
+
         aluguel.setStatus(StatusAluguelEnum.CONCLUIDO);
         aluguel.getCarro().setStatus(StatusCarroEnum.RESERVADO);
 
@@ -85,5 +83,13 @@ public class AluguelServiceImpl implements AluguelService {
     private Aluguel findById(Long id) {
         return aluguelRepository.findById(id)
                 .orElseThrow(RentNotFoundException::new);
+    }
+
+    private void checkAvailabilityForRental(Long carroId) {
+        Carro carro = carroService.findById(carroId);
+
+        if(carro.getStatus().equals(StatusCarroEnum.RESERVADO)) {
+            throw new CarNotAvailableForRentalException();
+        }
     }
 }
