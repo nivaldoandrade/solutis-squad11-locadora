@@ -38,7 +38,7 @@ public class DateAndMinAgeValidator implements ConstraintValidator<ValidDateAndM
             }
 
             return isMinAge;
-        } catch (DateTimeParseException e) {
+        } catch (Exception e) {
             return false;
         }
 

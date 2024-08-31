@@ -3,6 +3,7 @@ package com.squad11.locadora.services.impl;
 import com.squad11.locadora.entities.CadastroPendente;
 
 import com.squad11.locadora.exceptions.EntityNotFoundException;
+import com.squad11.locadora.exceptions.PendingRegistrationNotFoundException;
 import com.squad11.locadora.exceptions.TokenExpiredException;
 import com.squad11.locadora.repositories.CadastroPendenteRepository;
 import com.squad11.locadora.services.CadastroPendenteService;
@@ -45,7 +46,7 @@ public class CadastroPendenteServiceImpl implements CadastroPendenteService {
         Optional<CadastroPendente> cadastroPendenteOptional = cadastroPendenteRepository.findByToken(token);
 
         if(cadastroPendenteOptional.isEmpty()) {
-            throw new EntityNotFoundException(CadastroPendente.class);
+            throw new PendingRegistrationNotFoundException();
         }
 
         CadastroPendente cadastroPendente = cadastroPendenteOptional.get();
