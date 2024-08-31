@@ -35,7 +35,8 @@ public class Carro {
     @ManyToOne
     private ModeloCarro modelo;
 
-    private Boolean isDisponivel;
+    @Enumerated(EnumType.STRING)
+    private StatusCarroEnum status;
 
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
@@ -44,12 +45,21 @@ public class Carro {
             inverseJoinColumns = @JoinColumn(name = "acessorio_id"))
     private List<Acessorio> acessorios;
 
-    public Carro(String chassi, String placa, BigDecimal valorDiaria, ModeloCarro modelo, List<Acessorio> acessorios) {
+
+    public Carro(
+            String chassi,
+            String placa,
+            BigDecimal valorDiaria,
+            ModeloCarro modelo,
+            StatusCarroEnum status,
+            List<Acessorio> acessorio
+    ) {
 
         this.chassi = chassi;
         this.placa = placa;
         this.valorDiaria = valorDiaria;
         this.modelo = modelo;
+        this.status = status;
         this.acessorios = acessorios;
     }
 }

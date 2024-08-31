@@ -18,12 +18,20 @@ public class AluguelController {
     @Autowired
     AluguelService aluguelService;
 
-    @PostMapping("{carrinhoId}")
+    @PostMapping("/{carrinhoId}")
     public ResponseEntity<?> create(@PathVariable Long carrinhoId) {
 
         List<Aluguel> aluguel = aluguelService.create(carrinhoId);
 
 
         return ResponseEntity.ok(aluguel);
+    }
+
+    @PostMapping("/{aluguelId}/pagamento-cartao")
+    public ResponseEntity<?> paymentCard(@PathVariable Long aluguelId) {
+
+        aluguelService.payment(aluguelId);
+
+        return ResponseEntity.ok("Pagamento realizado com sucesso!");
     }
 }

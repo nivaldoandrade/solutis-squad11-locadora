@@ -21,7 +21,7 @@ public class MotoristaController {
     private MotoristaService motoristaService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseMotoristaDTO> create(@RequestBody @Validated CreateMotoristaDTO createMotoristaDTO) {
+    public ResponseEntity<ResponseMotoristaDTO> create(@RequestBody CreateMotoristaDTO createMotoristaDTO) {
 
         String token = motoristaService.create(createMotoristaDTO);
 

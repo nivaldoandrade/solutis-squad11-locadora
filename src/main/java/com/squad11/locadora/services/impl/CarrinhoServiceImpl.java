@@ -9,6 +9,7 @@ import com.squad11.locadora.repositories.CarrinhoRepository;
 import com.squad11.locadora.repositories.CarroRepository;
 import com.squad11.locadora.services.ApoliceService;
 import com.squad11.locadora.services.CarrinhoService;
+import com.squad11.locadora.services.CarroService;
 import com.squad11.locadora.services.MotoristaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import static com.squad11.locadora.utils.DateUtils.formatStringToDate;
 public class CarrinhoServiceImpl implements CarrinhoService {
 
     @Autowired
-    CarroRepository carroRepository;
+    CarroService carroService;
 
     @Autowired
     CarrinhoRepository carrinhoRepository;
@@ -126,22 +127,35 @@ public class CarrinhoServiceImpl implements CarrinhoService {
 
         Apolice apolice = apoliceService.findById(apoliceId);
 
-        Optional<Carro> carro = carroRepository.findById(carrinhoCarroDTO.carroId());
+        Carro carro = carroService.findById(carrinhoCarroDTO.carroId());
 
-        if(carro.isEmpty()) {
-            throw new CarNotFoundException();
+        Optional<Carro> existingCarroEmCarrinho = carrinho.getCarrinhoCarros()
+                .stream()
+                .filter(c -> c.getCarro().equals(carro))
+                .map(CarrinhoCarro::getCarro)
+                .findFirst();
+
+        if(existingCarroEmCarrinho.isEmpty() && !carro.getStatus().equals(StatusCarroEnum.DISPONIVEL)) {
+            throw new CarNotAvailableException();
         }
 
         Optional<CarrinhoCarro> apoliceEmUso = carrinhoCarroRepository.findByApolice(apolice);
 
-        if(apoliceEmUso.isPresent() && !apoliceEmUso.get().getCarro().equals(carro.get())) {
-            throw new PolicyAlreadyInUseException();
-        }
+        if (apoliceEmUso.isPresent()) {
+            CarrinhoCarro carrinhoCarro = apoliceEmUso.get();
 
+            boolean apoliceEmUsoPorOutroCarro = !carrinhoCarro.getCarro().equals(carro);
+            boolean carrinhoIncorreto = !carrinhoCarro.getCarrinho().getId().equals(carrinho.getMotorista().getId());
+
+            if (apoliceEmUsoPorOutroCarro || carrinhoIncorreto) {
+                throw new PolicyAlreadyInUseException();
+            }
+        }
 
         CarrinhoCarro carrinhoCarro = new CarrinhoCarro(
                 carrinho,
-                carro.get(),dataInicio,
+                carro,
+                dataInicio,
                 dataTermino,
                 apolice
         );

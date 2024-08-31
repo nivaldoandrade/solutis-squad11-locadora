@@ -9,4 +9,6 @@ public interface CarroService {
     List<Carro> findAll(List<String> categorias, List<String> acessorios);
 
     Carro findById(Long id);
+
+    Carro findByIdDisponivel(Long id);
 }

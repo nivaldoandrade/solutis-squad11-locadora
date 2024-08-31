@@ -7,4 +7,6 @@ import java.util.List;
 public interface AluguelService {
 
     List<Aluguel> create(Long carrinhoId);
+
+    void payment(Long aluguelId);
 }

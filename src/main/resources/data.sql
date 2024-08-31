@@ -7,9 +7,9 @@ INSERT INTO modelo_carro (descricao, categoria, fabricante_id) VALUES ('Corolla'
 INSERT INTO modelo_carro (descricao, categoria, fabricante_id) VALUES ('Civic', 'SEDAN_MEDIO', 2);
 INSERT INTO modelo_carro (descricao, categoria, fabricante_id) VALUES ('Mustang', 'ESPORTIVO', 3);
 
-INSERT INTO carro (placa, chassi, valor_diario, modelo_id) VALUES ('ABC1234', '1HGCM82633A004352', 150.00, 1);
-INSERT INTO carro (placa, chassi, valor_diario, modelo_id) VALUES ('XYZ5678', '1HGCM82633A004353', 180.00, 2);
-INSERT INTO carro (placa, chassi, valor_diario, modelo_id) VALUES ('LMN9012', '1HGCM82633A004354', 250.00, 3);
+INSERT INTO carro (placa, chassi, valor_diario, modelo_id, status) VALUES ('ABC1234', '1HGCM82633A004352', 150.00, 1, 'DISPONIVEL');
+INSERT INTO carro (placa, chassi, valor_diario, modelo_id, status) VALUES ('XYZ5678', '1HGCM82633A004353', 180.00, 2, 'DISPONIVEL');
+INSERT INTO carro (placa, chassi, valor_diario, modelo_id, status) VALUES ('LMN9012', '1HGCM82633A004354', 250.00, 3, 'DISPONIVEL');
 
 INSERT INTO acessorio (descricao) VALUES ('Ar Condicionado');
 INSERT INTO acessorio (descricao) VALUES ('Airbag');

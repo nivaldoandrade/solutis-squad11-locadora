@@ -1,11 +1,14 @@
 package com.squad11.locadora.services.impl;
 
 import com.squad11.locadora.entities.*;
+import com.squad11.locadora.exceptions.CarNotAvailableForRentalException;
+import com.squad11.locadora.exceptions.RentNotFoundException;
 import com.squad11.locadora.repositories.AluguelRepository;
 import com.squad11.locadora.repositories.ApoliceRepository;
 import com.squad11.locadora.services.AluguelService;
 import com.squad11.locadora.services.ApoliceService;
 import com.squad11.locadora.services.CarrinhoService;
+import com.squad11.locadora.services.CarroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,9 @@ public class AluguelServiceImpl implements AluguelService {
     @Autowired
     AluguelRepository aluguelRepository;
 
+    @Autowired
+    CarroService carroService;
+
     @Transactional
     @Override
     public List<Aluguel> create(Long carrinhoId) {
@@ -39,6 +45,11 @@ public class AluguelServiceImpl implements AluguelService {
 
         carrinho.getCarrinhoCarros().forEach(c -> {
             Apolice apolice = apoliceService.findById(c.getApolice().getId());
+            Carro carro = carroService.findById(c.getCarro().getId());
+
+            if(carro.getStatus().equals(StatusCarroEnum.RESERVADO)) {
+                throw new CarNotAvailableForRentalException();
+            }
 
             Aluguel aluguel = new Aluguel();
             aluguel.setMotorista(motorista);
@@ -47,11 +58,32 @@ public class AluguelServiceImpl implements AluguelService {
             aluguel.setDataDevolucao(c.getDataTermino());
             aluguel.setCarro(c.getCarro());
             aluguel.setApolice(apolice);
+            aluguel.setValorTotal(c.getValorTotal());
+
+//            c.getCarro().setStatus(StatusCarroEnum.RESERVADO);
 
             alugueis.add(aluguel);
         });
 
+        carrinhoService.deleteCarrinho(carrinho.getId());
+
         return aluguelRepository.saveAll(alugueis);
 
+    }
+
+    @Override
+    public void payment(Long aluguelId) {
+        Aluguel aluguel = this.findById(aluguelId);
+
+        aluguel.setStatus(StatusAluguelEnum.CONCLUIDO);
+        aluguel.getCarro().setStatus(StatusCarroEnum.RESERVADO);
+
+        aluguelRepository.save(aluguel);
+    }
+
+
+    private Aluguel findById(Long id) {
+        return aluguelRepository.findById(id)
+                .orElseThrow(RentNotFoundException::new);
     }
 }

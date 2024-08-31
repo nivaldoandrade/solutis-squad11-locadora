@@ -40,6 +40,9 @@ public class Aluguel {
     @OneToOne(fetch = FetchType.EAGER, optional = false)
     private Apolice apolice;
 
+    @Enumerated(EnumType.STRING)
+    private StatusAluguelEnum status = StatusAluguelEnum.PENDENTE;
+
     public Aluguel(
             LocalDate dataPedido,
             LocalDate dataEntrega,
@@ -47,7 +50,8 @@ public class Aluguel {
             BigDecimal valorTotal,
             Motorista motorista,
             Carro carro,
-            Apolice apolice
+            Apolice apolice,
+            StatusAluguelEnum status
     ) {
         this.dataPedido = dataPedido;
         this.dataEntrega = dataEntrega;
@@ -56,5 +60,6 @@ public class Aluguel {
         this.motorista = motorista;
         this.carro = carro;
         this.apolice = apolice;
+        this.status = status;
     }
 }
