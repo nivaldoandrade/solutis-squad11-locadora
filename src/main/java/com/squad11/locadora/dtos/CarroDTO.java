@@ -15,6 +15,8 @@ public record CarroDTO(
 
         String placa,
 
+        String cor,
+
         StatusCarroEnum status,
 
         BigDecimal valorDiaria,
@@ -32,6 +34,7 @@ public record CarroDTO(
                 .id(carro.getId())
                 .chassi(carro.getChassi())
                 .placa(carro.getPlaca())
+                .cor(carro.getCor())
                 .status(carro.getStatus())
                 .valorDiaria(carro.getValorDiaria())
                 .modelo(ModeloDTO.from(carro.getModelo()))

@@ -41,6 +41,7 @@ public record CreateCarroDTO(
         return new Carro(
                 createCarroDTO.chassi,
                 createCarroDTO.placa,
+                createCarroDTO.cor,
                 createCarroDTO.valorDiaria,
                 modeloCarro,
                 StatusCarroEnum.fromString(createCarroDTO.status),
