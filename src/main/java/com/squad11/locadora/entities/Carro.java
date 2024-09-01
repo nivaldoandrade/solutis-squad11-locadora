@@ -52,7 +52,7 @@ public class Carro {
             BigDecimal valorDiaria,
             ModeloCarro modelo,
             StatusCarroEnum status,
-            List<Acessorio> acessorio
+            List<Acessorio> acessorios
     ) {
 
         this.chassi = chassi;

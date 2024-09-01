@@ -6,6 +6,7 @@ import com.squad11.locadora.entities.Pedido;
 public interface PedidoService {
 
     Pedido show(Long pedidoId);
+
     Pedido payment(Long pedidoId);
 
     Pedido findById(Long pedidoId);

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "pessoa")
@@ -32,7 +31,7 @@ public abstract class Pessoa {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private SexoEnum sexo;
 
     @Column(nullable = false)

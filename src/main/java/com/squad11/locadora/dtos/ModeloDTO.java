@@ -5,7 +5,6 @@ import com.squad11.locadora.entities.Fabricante;
 import com.squad11.locadora.entities.ModeloCarro;
 import lombok.Builder;
 
-
 @Builder
 public record ModeloDTO(
         Long id,

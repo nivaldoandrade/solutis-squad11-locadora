@@ -2,14 +2,11 @@ package com.squad11.locadora.services.impl;
 
 import com.squad11.locadora.dtos.CreateAluguelDTO;
 import com.squad11.locadora.entities.*;
-import com.squad11.locadora.exceptions.CarNotAvailableForRentalException;
 import com.squad11.locadora.exceptions.OrderNotFoundException;
-import com.squad11.locadora.exceptions.PolicyAlreadyInUseException;
 import com.squad11.locadora.exceptions.RentalAlreadyPaidException;
 import com.squad11.locadora.repositories.PedidoRepository;
 import com.squad11.locadora.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,8 +48,6 @@ public class PedidoServiceImpl implements PedidoService {
         return pedidoRepository.save(pedido);
     }
 
-
-
     @Transactional
     @Override
     public Pedido payment(Long pedidoId) {
@@ -76,12 +71,4 @@ public class PedidoServiceImpl implements PedidoService {
 
         return pedido;
     }
-
-//    private void checkAvailabilityForRental(Long carroId) {
-//        Carro carro = carroService.findById(carroId);
-//
-//        if(carro.getStatus().equals(StatusCarroEnum.RESERVADO)) {
-//            throw new CarNotAvailableForRentalException(carroId);
-//        }
-//    }
 }

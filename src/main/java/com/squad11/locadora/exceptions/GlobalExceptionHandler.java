@@ -20,9 +20,35 @@ import java.util.Objects;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(PersonAlreadyActiveException.class)
+    public ResponseEntity<RestErrorResponse> handlePersonAlreadyActiveException(PersonAlreadyActiveException e) {
+        int statusCode = HttpStatus.CONFLICT.value();
+
+        RestErrorResponse error = new RestErrorResponse(
+                statusCode,
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(statusCode).body(error);
+    }
+
     @ExceptionHandler(RentalAlreadyPaidException.class)
     public ResponseEntity<RestErrorResponse> handleRentalAlreadyPaidException(RentalAlreadyPaidException e) {
         int statusCode = HttpStatus.CONFLICT.value();
+
+        RestErrorResponse error = new RestErrorResponse(
+                statusCode,
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(statusCode).body(error);
+    }
+
+    @ExceptionHandler(EmptyCartException.class)
+    public ResponseEntity<RestErrorResponse> handleEmptyCartException(EmptyCartException e) {
+        int statusCode = HttpStatus.BAD_REQUEST.value();
 
         RestErrorResponse error = new RestErrorResponse(
                 statusCode,

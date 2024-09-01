@@ -1,14 +1,11 @@
 package com.squad11.locadora.dtos;
 
-import com.squad11.locadora.entities.Acessorio;
 import com.squad11.locadora.entities.Carro;
-import com.squad11.locadora.entities.ModeloCarro;
 import com.squad11.locadora.entities.StatusCarroEnum;
 import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.util.List;
-
 
 @Builder
 public record CarroDTO(

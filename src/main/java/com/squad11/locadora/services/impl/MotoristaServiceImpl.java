@@ -5,19 +5,19 @@ import com.squad11.locadora.entities.Aluguel;
 import com.squad11.locadora.entities.Motorista;
 import com.squad11.locadora.entities.SexoEnum;
 import com.squad11.locadora.exceptions.DriverNotFoundException;
-import com.squad11.locadora.exceptions.EntityNotFoundException;
 import com.squad11.locadora.exceptions.NumeroCNHAlreadyInUseException;
+import com.squad11.locadora.exceptions.RentNotFoundException;
 import com.squad11.locadora.exceptions.UnconfirmedRegistrationException;
 import com.squad11.locadora.repositories.AluguelRepository;
 import com.squad11.locadora.repositories.MotoristaRepository;
-import com.squad11.locadora.services.AluguelService;
 import com.squad11.locadora.services.CadastroPendenteService;
 import com.squad11.locadora.services.MotoristaService;
 import com.squad11.locadora.services.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,10 +36,28 @@ public class MotoristaServiceImpl implements MotoristaService {
     AluguelRepository aluguelRepository;
 
     @Override
-    public List<Aluguel> showAlugueis(Long motoristaId) {
+    public Motorista show(Long motoristaId) {
+        return this.findById(motoristaId);
+    }
+
+    @Override
+    public Aluguel showAluguel(Long motoristaId, Long aluguelId) {
         Motorista motorista = this.findById(motoristaId);
 
-        return aluguelRepository.findAllByMotorista(motorista);
+        Optional<Aluguel> aluguel = aluguelRepository.findByMotorista(motorista);
+
+        if(aluguel.isEmpty()) {
+            throw new RentNotFoundException();
+        }
+
+        return aluguel.get();
+    }
+
+    @Override
+    public Page<Aluguel> listAlugueis(Pageable pageable, Long motoristaId) {
+        Motorista motorista = this.findById(motoristaId);
+
+        return aluguelRepository.findAllByMotorista(pageable, motorista);
     }
 
     @Override

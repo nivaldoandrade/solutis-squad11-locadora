@@ -2,13 +2,10 @@ package com.squad11.locadora.services.impl;
 
 import com.squad11.locadora.dtos.CreateAluguelDTO;
 import com.squad11.locadora.entities.*;
-import com.squad11.locadora.exceptions.CarNotAvailableForRentalException;
-import com.squad11.locadora.exceptions.PolicyAlreadyInUseException;
-import com.squad11.locadora.exceptions.RentNotFoundException;
-import com.squad11.locadora.exceptions.RentalAlreadyPaidException;
+import com.squad11.locadora.exceptions.*;
 import com.squad11.locadora.repositories.AluguelRepository;
 import com.squad11.locadora.services.AluguelService;
-import com.squad11.locadora.services.ApoliceService;
+import com.squad11.locadora.services.ApoliceSeguroService;
 import com.squad11.locadora.services.CarrinhoService;
 import com.squad11.locadora.services.CarroService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +16,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Service
 public class AluguelServiceImpl implements AluguelService {
 
@@ -27,7 +23,7 @@ public class AluguelServiceImpl implements AluguelService {
     CarrinhoService carrinhoService;
 
     @Autowired
-    ApoliceService apoliceService;
+    ApoliceSeguroService apoliceSeguroService;
 
     @Autowired
     AluguelRepository aluguelRepository;
@@ -45,6 +41,10 @@ public class AluguelServiceImpl implements AluguelService {
     @Override
     public List<Aluguel> create(Long carrinhoId, CreateAluguelDTO createAluguelDTO) {
         Carrinho carrinho = carrinhoService.showCarrinhoById(carrinhoId);
+
+        if(carrinho.getItemCarrinhos().isEmpty()) {
+            throw new EmptyCartException();
+        }
 
         Motorista motorista = carrinho.getMotorista();
 
@@ -79,7 +79,7 @@ public class AluguelServiceImpl implements AluguelService {
     }
 
     private Apolice checkAvailabilityPolicy(Long apoliceId) {
-        Apolice apolice = apoliceService.findById(apoliceId);
+        Apolice apolice = apoliceSeguroService.show(apoliceId);
 
         if(apolice.getAluguel() != null) {
             throw new PolicyAlreadyInUseException(apoliceId);

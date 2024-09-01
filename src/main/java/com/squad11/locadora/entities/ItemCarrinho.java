@@ -1,6 +1,5 @@
 package com.squad11.locadora.entities;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.squad11.locadora.entities.PK.CarrinhoCarroPK;
 import jakarta.persistence.*;

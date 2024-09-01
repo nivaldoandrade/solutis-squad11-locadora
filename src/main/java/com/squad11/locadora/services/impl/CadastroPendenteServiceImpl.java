@@ -2,8 +2,9 @@ package com.squad11.locadora.services.impl;
 
 import com.squad11.locadora.entities.CadastroPendente;
 
-import com.squad11.locadora.exceptions.EntityNotFoundException;
+import com.squad11.locadora.entities.Pessoa;
 import com.squad11.locadora.exceptions.PendingRegistrationNotFoundException;
+import com.squad11.locadora.exceptions.PersonAlreadyActiveException;
 import com.squad11.locadora.exceptions.TokenExpiredException;
 import com.squad11.locadora.repositories.CadastroPendenteRepository;
 import com.squad11.locadora.services.CadastroPendenteService;
@@ -24,8 +25,16 @@ public class CadastroPendenteServiceImpl implements CadastroPendenteService {
     @Autowired
     private PessoaService pessoaService;
 
+    @Transactional(noRollbackFor = PersonAlreadyActiveException.class)
     @Override
     public String createToken(Long id) {
+        Pessoa pessoa = pessoaService.findById(id);
+
+        if(pessoa.isAtivo()) {
+            cadastroPendenteRepository.deleteById(id);
+            throw new PersonAlreadyActiveException();
+        }
+
         String token = generateToken(id);
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(15);
 

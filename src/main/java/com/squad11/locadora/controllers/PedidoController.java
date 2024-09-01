@@ -1,22 +1,16 @@
 package com.squad11.locadora.controllers;
 
-
 import com.squad11.locadora.dtos.CreateAluguelDTO;
 import com.squad11.locadora.dtos.ResponsePedidoDTO;
-import com.squad11.locadora.entities.Aluguel;
-import com.squad11.locadora.entities.Motorista;
 import com.squad11.locadora.entities.Pedido;
 import com.squad11.locadora.repositories.PedidoRepository;
 import com.squad11.locadora.services.AluguelService;
-import com.squad11.locadora.services.MotoristaService;
 import com.squad11.locadora.services.PedidoService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/pedidos")

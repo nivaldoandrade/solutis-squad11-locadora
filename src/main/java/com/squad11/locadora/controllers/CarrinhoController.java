@@ -4,7 +4,6 @@ import com.squad11.locadora.dtos.CreateItemCarrinhoDTO;
 import com.squad11.locadora.dtos.CreateCarrinhoDTO;
 import com.squad11.locadora.dtos.ResponseCarrinhoDTO;
 import com.squad11.locadora.entities.Carrinho;
-import com.squad11.locadora.repositories.CarrinhoRepository;
 import com.squad11.locadora.services.CarrinhoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +19,6 @@ public class CarrinhoController {
 
     @Autowired
     CarrinhoService carrinhoService;
-
-    @Autowired
-    CarrinhoRepository carrinhoRepository;
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseCarrinhoDTO> show(@PathVariable Long id) {
@@ -47,34 +43,34 @@ public class CarrinhoController {
         return ResponseEntity.created(uri).body(responseCarrinhoDTO);
     }
 
-    @PatchMapping("{id}")
-    public ResponseEntity<ResponseCarrinhoDTO> createAndUpdateCarro(
-            @PathVariable Long id,
+    @PatchMapping("{carrinhoId}")
+    public ResponseEntity<ResponseCarrinhoDTO> addAndUpdateCarro(
+            @PathVariable Long carrinhoId,
             @RequestBody @Validated CreateItemCarrinhoDTO carrinhoCarroDTO
     ) {
 
-        Carrinho carrinho = carrinhoService.addAndUpateCarro(id, carrinhoCarroDTO);
+        Carrinho carrinho = carrinhoService.addAndUpateCarro(carrinhoId, carrinhoCarroDTO);
 
         ResponseCarrinhoDTO responseCarrinhoDTO = ResponseCarrinhoDTO.from(carrinho);
 
         return ResponseEntity.ok(responseCarrinhoDTO);
     }
 
-    @DeleteMapping("{id}/{carroId}")
+    @DeleteMapping("{carrinhoId}/{carroId}")
     public ResponseEntity<Void> deleteCarroCarrinho(
-            @PathVariable Long id,
+            @PathVariable Long carrinhoId,
             @PathVariable Long carroId
     ) {
 
-        carrinhoService.deleteCarro(id, carroId);
+        carrinhoService.deleteCarro(carrinhoId, carroId);
 
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteCarrinho(@PathVariable Long id) {
+    @DeleteMapping("{carrinhoId}")
+    public ResponseEntity<Void> deleteCarrinho(@PathVariable Long carrinhoId) {
 
-        carrinhoService.deleteCarrinho(id);
+        carrinhoService.deleteCarrinho(carrinhoId);
 
         return ResponseEntity.noContent().build();
     }

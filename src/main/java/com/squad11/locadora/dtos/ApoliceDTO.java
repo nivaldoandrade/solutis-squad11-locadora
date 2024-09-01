@@ -5,7 +5,6 @@ import lombok.Builder;
 
 import java.math.BigDecimal;
 
-
 @Builder
 public record ApoliceDTO(
         Long id,

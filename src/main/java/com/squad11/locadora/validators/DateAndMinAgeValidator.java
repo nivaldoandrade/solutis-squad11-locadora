@@ -6,7 +6,6 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.format.DateTimeParseException;
 
 import static com.squad11.locadora.utils.DateUtils.DTF;
 

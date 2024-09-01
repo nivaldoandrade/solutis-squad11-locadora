@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Documented
 @Constraint(validatedBy = EnumSexoPatternValidator.class)
 public @interface EnumSexoPattern {
-    String message() default "Sexo é obrigátorio";
+    String message() default "O Sexo é obrigátorio";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

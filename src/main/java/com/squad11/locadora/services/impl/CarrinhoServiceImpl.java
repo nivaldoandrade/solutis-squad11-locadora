@@ -32,7 +32,7 @@ public class CarrinhoServiceImpl implements CarrinhoService {
     MotoristaService motoristaService;
 
     @Autowired
-    ApoliceService apoliceService;
+    ApoliceSeguroService apoliceSeguroService;
 
 
     @Override
@@ -109,7 +109,7 @@ public class CarrinhoServiceImpl implements CarrinhoService {
 
         Long apoliceId = itemCarrinhoDTO.apoliceId();
 
-        Apolice apolice = apoliceService.findById(apoliceId);
+        Apolice apolice = apoliceSeguroService.show(apoliceId);
 
         if (apolice.getAluguel() != null) {
             throw new PolicyAlreadyInUseException(apoliceId);
