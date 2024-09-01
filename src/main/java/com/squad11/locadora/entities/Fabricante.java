@@ -1,6 +1,5 @@
 package com.squad11.locadora.entities;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

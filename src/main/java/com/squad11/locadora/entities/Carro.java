@@ -19,18 +19,21 @@ public class Carro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "chassi")
+    @Column(name = "chassi", nullable = false)
     private String chassi;
 
-    @Column(name = "placa")
+    @Column(name = "placa", nullable = false)
     private String placa;
 
-    @Column(name = "valor_diario")
+    @Column(name = "cor", nullable = false)
+    private String cor;
+
+    @Column(name = "valor_diario", nullable = false)
     private BigDecimal valorDiaria;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "carro")
-    private List<Aluguel> alugueis;
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "carro")
+//    private List<Aluguel> alugueis;
 
     @ManyToOne
     private ModeloCarro modelo;
@@ -49,14 +52,16 @@ public class Carro {
     public Carro(
             String chassi,
             String placa,
+            String cor,
             BigDecimal valorDiaria,
             ModeloCarro modelo,
             StatusCarroEnum status,
-            List<Acessorio> acessorio
+            List<Acessorio> acessorios
     ) {
 
         this.chassi = chassi;
         this.placa = placa;
+        this.cor = cor;
         this.valorDiaria = valorDiaria;
         this.modelo = modelo;
         this.status = status;

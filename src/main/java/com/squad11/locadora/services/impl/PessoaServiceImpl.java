@@ -1,10 +1,8 @@
 package com.squad11.locadora.services.impl;
 
-import com.squad11.locadora.entities.Motorista;
 import com.squad11.locadora.entities.Pessoa;
 import com.squad11.locadora.exceptions.CPFAlreadyInUseException;
 import com.squad11.locadora.exceptions.EmailAlreadyInUseException;
-import com.squad11.locadora.exceptions.EntityNotFoundException;
 import com.squad11.locadora.exceptions.PersonNotFoundException;
 import com.squad11.locadora.repositories.PessoaRepository;
 import com.squad11.locadora.services.PessoaService;

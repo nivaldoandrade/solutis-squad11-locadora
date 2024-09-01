@@ -1,6 +1,5 @@
 package com.squad11.locadora.entities;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.squad11.locadora.entities.PK.CarrinhoCarroPK;
 import jakarta.persistence.*;
@@ -17,7 +16,7 @@ import java.time.temporal.ChronoUnit;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class CarrinhoCarro {
+public class ItemCarrinho {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
@@ -33,10 +32,10 @@ public class CarrinhoCarro {
     @Column(name = "valor_total", nullable = false)
     private BigDecimal valorTotal = new BigDecimal(0);
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER,  optional = false)
     private Apolice apolice;
 
-    public CarrinhoCarro(
+    public ItemCarrinho(
             Carrinho carrinho,
             Carro carro,
             LocalDate dataInicio,

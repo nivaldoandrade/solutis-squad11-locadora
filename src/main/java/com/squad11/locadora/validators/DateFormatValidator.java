@@ -4,8 +4,6 @@ import com.squad11.locadora.constraints.DateFormatPattern;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.time.DateTimeException;
-import java.time.LocalDate;
 
 import static com.squad11.locadora.utils.DateUtils.formatStringToDate;
 

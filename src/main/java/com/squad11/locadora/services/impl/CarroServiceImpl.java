@@ -1,20 +1,22 @@
 package com.squad11.locadora.services.impl;
 
-import com.squad11.locadora.entities.Carro;
-import com.squad11.locadora.entities.CategoriaEnum;
-import com.squad11.locadora.entities.StatusCarroEnum;
+import com.squad11.locadora.dtos.CreateCarroDTO;
+import com.squad11.locadora.entities.*;
 import com.squad11.locadora.exceptions.CarNotAvailableException;
+import com.squad11.locadora.exceptions.CarNotAvailableForRentalException;
 import com.squad11.locadora.exceptions.CartNotFoundException;
-import com.squad11.locadora.exceptions.EntityNotFoundException;
 import com.squad11.locadora.repositories.CarroRepository;
+import com.squad11.locadora.services.AcessorioService;
 import com.squad11.locadora.services.CarroService;
+import com.squad11.locadora.services.ModeloCarroService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.squad11.locadora.specifications.CarrosSpecifications.*;
 
@@ -24,8 +26,14 @@ public class CarroServiceImpl implements CarroService {
     @Autowired
     private CarroRepository carroRepository;
 
+    @Autowired
+    private ModeloCarroService modeloCarroService;
+
+    @Autowired
+    private AcessorioService acessorioService;
+
     @Override
-    public List<Carro> findAll(List<String> categorias, List<String> acessorios) {
+    public Page<Carro> list(Pageable pageable, List<String> categorias, List<String> acessorios) {
 
         Specification<Carro> specification = Specification.where(null);
 
@@ -42,7 +50,7 @@ public class CarroServiceImpl implements CarroService {
         }
 
 
-        return carroRepository.findAll(specification.and(byDisponiveis()));
+        return carroRepository.findAll(specification.and(byDisponiveis()), pageable);
     }
 
     @Override
@@ -59,6 +67,42 @@ public class CarroServiceImpl implements CarroService {
         }
 
         return carro;
+    }
+
+    @Override
+    public void checkCarroDisponivel(Long carroId) {
+        Carro carro = this.findById(carroId);
+
+
+        if(carro.getStatus().equals(StatusCarroEnum.RESERVADO)) {
+            throw new CarNotAvailableForRentalException(carroId);
+        }
+    }
+
+    @Override
+    public Carro create(CreateCarroDTO createCarroDTO) {
+        ModeloCarro modeloCarro = modeloCarroService.show(createCarroDTO.modeloId());
+
+        List<Acessorio> acessorios = new ArrayList<>();
+
+        if(createCarroDTO.acessoriosId() != null) {
+            acessorios = getAcessorios(createCarroDTO.acessoriosId());
+        }
+
+        Carro carro = CreateCarroDTO.to(createCarroDTO, acessorios, modeloCarro);
+
+        return carroRepository.save(carro);
+    }
+
+    private List<Acessorio> getAcessorios(List<Long> acessoriosId) {
+        List<Acessorio> acessorios = new ArrayList<>();
+
+        acessoriosId.forEach(a -> {
+            Acessorio acessorio = acessorioService.show(a);
+            acessorios.add(acessorio);
+        });
+
+        return acessorios;
     }
 
 

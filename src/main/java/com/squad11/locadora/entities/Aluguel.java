@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Calendar;
 
 @Entity
 @Table(name = "aluguel")
@@ -19,16 +18,16 @@ public class Aluguel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "data_pedido")
+    @Column(name = "data_pedido", nullable = false)
     private LocalDate dataPedido;
 
-    @Column(name = "data_entrega")
+    @Column(name = "data_entrega", nullable = false)
     private LocalDate dataEntrega;
 
-    @Column(name = "data_devolucao")
+    @Column(name = "data_devolucao", nullable = false)
     private LocalDate dataDevolucao;
 
-    @Column(name = "valor_total")
+    @Column(name = "valor_total", nullable = false)
     private BigDecimal valorTotal;
 
     @ManyToOne
@@ -37,11 +36,14 @@ public class Aluguel {
     @ManyToOne
     private Carro carro;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @OneToOne(fetch = FetchType.EAGER)
     private Apolice apolice;
 
     @Enumerated(EnumType.STRING)
     private StatusAluguelEnum status = StatusAluguelEnum.PENDENTE;
+
+    @Column(name = "aceitou_termos", nullable = false)
+    private Boolean aceitouTermos;
 
     public Aluguel(
             LocalDate dataPedido,

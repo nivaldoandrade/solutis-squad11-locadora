@@ -1,5 +1,6 @@
 package com.squad11.locadora.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,10 @@ public class Apolice {
 
     @Column(name = "protecao_roubo", nullable = false)
     private Boolean protecaoRoubo;
+
+    @OneToOne
+    @JsonIgnore
+    private Aluguel aluguel;
 
     public Apolice(
             BigDecimal valorFranquia,
