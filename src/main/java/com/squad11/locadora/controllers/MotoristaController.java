@@ -2,13 +2,13 @@ package com.squad11.locadora.controllers;
 
 import com.squad11.locadora.dtos.CreateMotoristaDTO;
 
+import com.squad11.locadora.dtos.ResponseAluguelMotoristaDTO;
 import com.squad11.locadora.dtos.ResponseMotoristaDTO;
 import com.squad11.locadora.entities.Aluguel;
 import com.squad11.locadora.services.MotoristaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -23,12 +23,15 @@ public class MotoristaController {
     private MotoristaService motoristaService;
 
     @GetMapping("{motoristaId}/alugueis")
-    public ResponseEntity<?> showAlugueis(@PathVariable Long motoristaId) {
+    public ResponseEntity<List<ResponseAluguelMotoristaDTO>> showAlugueis(@PathVariable Long motoristaId) {
 
         List<Aluguel> alugueis = motoristaService.showAlugueis(motoristaId);
 
-        return ResponseEntity.ok(alugueis);
+        List<ResponseAluguelMotoristaDTO> aluguelMotoristaDTOS = alugueis.stream()
+                .map(ResponseAluguelMotoristaDTO::from).toList();
 
+
+        return ResponseEntity.ok().body(aluguelMotoristaDTOS);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

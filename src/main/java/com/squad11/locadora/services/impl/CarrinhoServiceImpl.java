@@ -1,16 +1,12 @@
 package com.squad11.locadora.services.impl;
 
-import com.squad11.locadora.dtos.CreateCarrinhoCarroDTO;
+import com.squad11.locadora.dtos.CreateItemCarrinhoDTO;
 import com.squad11.locadora.dtos.CreateCarrinhoDTO;
 import com.squad11.locadora.entities.*;
 import com.squad11.locadora.exceptions.*;
-import com.squad11.locadora.repositories.CarrinhoCarroRepository;
+import com.squad11.locadora.repositories.itemCarrinhoRepository;
 import com.squad11.locadora.repositories.CarrinhoRepository;
-import com.squad11.locadora.repositories.CarroRepository;
-import com.squad11.locadora.services.ApoliceService;
-import com.squad11.locadora.services.CarrinhoService;
-import com.squad11.locadora.services.CarroService;
-import com.squad11.locadora.services.MotoristaService;
+import com.squad11.locadora.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +26,7 @@ public class CarrinhoServiceImpl implements CarrinhoService {
     CarrinhoRepository carrinhoRepository;
 
     @Autowired
-    CarrinhoCarroRepository carrinhoCarroRepository;
+    itemCarrinhoRepository itemCarrinhoRepository;
 
     @Autowired
     MotoristaService motoristaService;
@@ -38,9 +34,10 @@ public class CarrinhoServiceImpl implements CarrinhoService {
     @Autowired
     ApoliceService apoliceService;
 
+
     @Override
-    public Carrinho show(Long id) {
-        return this.findById(id);
+    public Carrinho showCarrinhoById(Long id) {
+        return this.findCarrinhoById(id);
     }
 
     @Transactional
@@ -49,11 +46,7 @@ public class CarrinhoServiceImpl implements CarrinhoService {
 
         Long motoristaId = createCarrinhoDTO.motoristaId();
 
-        Motorista motorista = motoristaService.findById(motoristaId);
-
-        if(!motorista.isAtivo()) {
-            throw new UnconfirmedRegistrationException();
-        }
+        Motorista motorista = motoristaService.findByIdAtivo(motoristaId);
 
         Optional<Carrinho> existingCarrinho = carrinhoRepository.findById(motoristaId);
 
@@ -61,98 +54,75 @@ public class CarrinhoServiceImpl implements CarrinhoService {
                 .orElseGet(() -> carrinhoRepository.save(new Carrinho(motorista)));
 
         if(createCarrinhoDTO.carro() != null) {
-            createCarrinhoCarro(createCarrinhoDTO.carro(), newCarrinho);
+            createItemCarrinho(createCarrinhoDTO.carro(), newCarrinho);
         }
 
         return newCarrinho;
     }
 
     @Override
-    public Carrinho createAndUpateCarro(Long id, CreateCarrinhoCarroDTO carrinhoCarroDTO) {
+    public Carrinho addAndUpateCarro(Long id, CreateItemCarrinhoDTO itemCarrinhoDTO) {
 
-        Optional<Carrinho> existingCarrinho = carrinhoRepository.findById(id);
+       Carrinho existingCarrinho = this.findCarrinhoById(id);
 
-        if(existingCarrinho.isEmpty()) {
-            throw new CartNotFoundException();
-        }
+        createItemCarrinho(itemCarrinhoDTO, existingCarrinho);
 
-        createCarrinhoCarro(carrinhoCarroDTO, existingCarrinho.get());
-
-
-        return existingCarrinho.get();
+        return existingCarrinho;
     }
 
     @Transactional
     @Override
-    public void deleteCarroCarrinho(Long id, Long carroId) {
-        Optional<Carrinho> existingCarrinho = carrinhoRepository.findById(id);
+    public void deleteCarro(Long carrinhoId, Long carroId) {
+        Carrinho existingCarrinho = findCarrinhoById(carrinhoId);
 
-        if(existingCarrinho.isEmpty()) {
-            throw new CarInCartNotFoundException();
-        }
+        Carrinho carrinho = existingCarrinho;
 
-        Carrinho carrinho = existingCarrinho.get();
-
-        Optional<CarrinhoCarro> carro = carrinho.getCarrinhoCarros()
+        Optional<ItemCarrinho> itemCarrinho = carrinho.getItemCarrinhos()
                 .stream().filter(c -> c.getCarro().getId().equals(carroId)).findFirst();
 
-        if (carro.isEmpty()) {
+        if (itemCarrinho.isEmpty()) {
             throw new CarInCartNotFoundException();
         }
 
-        carrinhoCarroRepository.delete(carro.get());
+        itemCarrinhoRepository.delete(itemCarrinho.get());
     }
 
     @Override
-    public void deleteCarrinho(Long id) {
-        Optional<Carrinho> existingCarrinho = carrinhoRepository.findById(id);
+    public void deleteCarrinho(Long carrinhoId) {
+        Carrinho existingCarrinho = this.findCarrinhoById(carrinhoId);
 
-        if(existingCarrinho.isEmpty()) {
-            throw new CartNotFoundException();
-        }
-
-        carrinhoRepository.delete(existingCarrinho.get());
+        carrinhoRepository.delete(existingCarrinho);
     }
 
-    private Carrinho findById(Long carrinhoId) {
+    private Carrinho findCarrinhoById(Long carrinhoId) {
         return carrinhoRepository.findById(carrinhoId)
                 .orElseThrow(CartNotFoundException::new);
     }
 
-    private void createCarrinhoCarro(CreateCarrinhoCarroDTO carrinhoCarroDTO, Carrinho carrinho) {
-        LocalDate dataInicio = formatStringToDate(carrinhoCarroDTO.dataInicio());
-        LocalDate dataTermino = formatStringToDate(carrinhoCarroDTO.dataTermino());
+    private void createItemCarrinho(CreateItemCarrinhoDTO itemCarrinhoDTO, Carrinho carrinho) {
+        LocalDate dataInicio = formatStringToDate(itemCarrinhoDTO.dataInicio());
+        LocalDate dataTermino = formatStringToDate(itemCarrinhoDTO.dataTermino());
 
-        Long apoliceId = carrinhoCarroDTO.apoliceId();
+        Carro carro = carroService.findByIdDisponivel(itemCarrinhoDTO.carroId());
+
+        Long apoliceId = itemCarrinhoDTO.apoliceId();
 
         Apolice apolice = apoliceService.findById(apoliceId);
 
-        Carro carro = carroService.findById(carrinhoCarroDTO.carroId());
+        if (apolice.getAluguel() != null) {
+            throw new PolicyAlreadyInUseException(apoliceId);
+        }
 
-        Optional<Carro> existingCarroEmCarrinho = carrinho.getCarrinhoCarros()
+        carrinho.getItemCarrinhos()
                 .stream()
-                .filter(c -> c.getCarro().equals(carro))
-                .map(CarrinhoCarro::getCarro)
-                .findFirst();
+                .filter(i -> i.getApolice().equals(apolice))
+                .findFirst()
+                .ifPresent(item -> {
+                    throw new PolicyAlreadyInUseException(apolice.getId());
+                });
 
-        if(existingCarroEmCarrinho.isEmpty() && !carro.getStatus().equals(StatusCarroEnum.DISPONIVEL)) {
-            throw new CarNotAvailableException();
-        }
 
-        Optional<CarrinhoCarro> apoliceEmUso = carrinhoCarroRepository.findByApolice(apolice);
-
-        if (apoliceEmUso.isPresent()) {
-            CarrinhoCarro carrinhoCarro = apoliceEmUso.get();
-
-            boolean apoliceEmUsoPorOutroCarro = !carrinhoCarro.getCarro().equals(carro);
-            boolean carrinhoIncorreto = !carrinhoCarro.getCarrinho().getId().equals(carrinho.getMotorista().getId());
-
-            if (apoliceEmUsoPorOutroCarro || carrinhoIncorreto) {
-                throw new PolicyAlreadyInUseException();
-            }
-        }
-
-        CarrinhoCarro carrinhoCarro = new CarrinhoCarro(
+        ItemCarrinho itemCarrinho = new ItemCarrinho(
                 carrinho,
                 carro,
                 dataInicio,
@@ -160,9 +130,9 @@ public class CarrinhoServiceImpl implements CarrinhoService {
                 apolice
         );
 
-        carrinho.getCarrinhoCarros().add(carrinhoCarro);
+        carrinho.getItemCarrinhos().add(itemCarrinho);
 
-        carrinhoCarroRepository.save(carrinhoCarro);
+        itemCarrinhoRepository.save(itemCarrinho);
     }
 
 }

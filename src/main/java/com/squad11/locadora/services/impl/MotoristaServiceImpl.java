@@ -7,6 +7,7 @@ import com.squad11.locadora.entities.SexoEnum;
 import com.squad11.locadora.exceptions.DriverNotFoundException;
 import com.squad11.locadora.exceptions.EntityNotFoundException;
 import com.squad11.locadora.exceptions.NumeroCNHAlreadyInUseException;
+import com.squad11.locadora.exceptions.UnconfirmedRegistrationException;
 import com.squad11.locadora.repositories.AluguelRepository;
 import com.squad11.locadora.repositories.MotoristaRepository;
 import com.squad11.locadora.services.AluguelService;
@@ -42,6 +43,17 @@ public class MotoristaServiceImpl implements MotoristaService {
     }
 
     @Override
+    public Motorista findByIdAtivo(Long motoristaId) {
+        Motorista motorista = this.findById(motoristaId);
+
+        if(!motorista.isAtivo()) {
+            throw new UnconfirmedRegistrationException();
+        }
+
+        return motorista;
+    }
+
+    @Override
     public String create(CreateMotoristaDTO createMotoristaDTO) {
 
         pessoaService.validateEmailUniqueness(createMotoristaDTO.email(), null);
@@ -62,8 +74,8 @@ public class MotoristaServiceImpl implements MotoristaService {
     }
 
     @Override
-    public Motorista findById(Long id) {
-        return motoristaRepository.findById(id)
+    public Motorista findById(Long motoristaId) {
+        return motoristaRepository.findById(motoristaId)
                 .orElseThrow(DriverNotFoundException::new);
     }
 

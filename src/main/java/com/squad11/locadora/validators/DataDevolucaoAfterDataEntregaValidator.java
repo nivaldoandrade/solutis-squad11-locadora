@@ -1,7 +1,7 @@
 package com.squad11.locadora.validators;
 
 import com.squad11.locadora.constraints.DataDevolucaoAfterDataEntregaPattern;
-import com.squad11.locadora.dtos.CreateCarrinhoCarroDTO;
+import com.squad11.locadora.dtos.CreateItemCarrinhoDTO;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import static com.squad11.locadora.utils.DateUtils.formatStringToDate;
 
 public class DataDevolucaoAfterDataEntregaValidator
-        implements ConstraintValidator<DataDevolucaoAfterDataEntregaPattern, CreateCarrinhoCarroDTO> {
+        implements ConstraintValidator<DataDevolucaoAfterDataEntregaPattern, CreateItemCarrinhoDTO> {
 
     private String fieldName;
 
@@ -20,7 +20,7 @@ public class DataDevolucaoAfterDataEntregaValidator
     }
 
     @Override
-    public boolean isValid(CreateCarrinhoCarroDTO dto, ConstraintValidatorContext context) {
+    public boolean isValid(CreateItemCarrinhoDTO dto, ConstraintValidatorContext context) {
         try {
             LocalDate dataEntrega = formatStringToDate(dto.dataInicio());
             LocalDate dataDevolucao = formatStringToDate(dto.dataTermino());

@@ -4,8 +4,6 @@ package com.squad11.locadora.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +25,7 @@ public class Carrinho {
     private Motorista motorista;
 
     @OneToMany(mappedBy = "id.carrinho", cascade = CascadeType.REMOVE)
-    private List<CarrinhoCarro> carrinhoCarros = new ArrayList<>();
+    private List<ItemCarrinho> itemCarrinhos = new ArrayList<>();
 
     public Carrinho(Motorista motorista) {
         this.motorista = motorista;

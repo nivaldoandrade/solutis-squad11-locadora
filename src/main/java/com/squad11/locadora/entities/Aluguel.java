@@ -37,7 +37,7 @@ public class Aluguel {
     @ManyToOne
     private Carro carro;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @OneToOne(fetch = FetchType.EAGER)
     private Apolice apolice;
 
     @Enumerated(EnumType.STRING)

@@ -1,15 +1,11 @@
 package com.squad11.locadora.controllers;
 
-import com.squad11.locadora.constraints.DataDevolucaoAfterDataEntregaPattern;
-import com.squad11.locadora.dtos.CreateCarrinhoCarroDTO;
+import com.squad11.locadora.dtos.CreateItemCarrinhoDTO;
 import com.squad11.locadora.dtos.CreateCarrinhoDTO;
 import com.squad11.locadora.dtos.ResponseCarrinhoDTO;
 import com.squad11.locadora.entities.Carrinho;
-import com.squad11.locadora.entities.CarrinhoCarro;
 import com.squad11.locadora.repositories.CarrinhoRepository;
 import com.squad11.locadora.services.CarrinhoService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/carrinhos")
@@ -31,7 +26,7 @@ public class CarrinhoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseCarrinhoDTO> show(@PathVariable Long id) {
-        Carrinho carrinho = carrinhoService.show(id);
+        Carrinho carrinho = carrinhoService.showCarrinhoById(id);
 
         ResponseCarrinhoDTO responseCarrinhoDTO = ResponseCarrinhoDTO.from(carrinho);
 
@@ -55,10 +50,10 @@ public class CarrinhoController {
     @PatchMapping("{id}")
     public ResponseEntity<ResponseCarrinhoDTO> createAndUpdateCarro(
             @PathVariable Long id,
-            @RequestBody @Validated CreateCarrinhoCarroDTO carrinhoCarroDTO
+            @RequestBody @Validated CreateItemCarrinhoDTO carrinhoCarroDTO
     ) {
 
-        Carrinho carrinho = carrinhoService.createAndUpateCarro(id, carrinhoCarroDTO);
+        Carrinho carrinho = carrinhoService.addAndUpateCarro(id, carrinhoCarroDTO);
 
         ResponseCarrinhoDTO responseCarrinhoDTO = ResponseCarrinhoDTO.from(carrinho);
 
@@ -71,7 +66,7 @@ public class CarrinhoController {
             @PathVariable Long carroId
     ) {
 
-        carrinhoService.deleteCarroCarrinho(id, carroId);
+        carrinhoService.deleteCarro(id, carroId);
 
         return ResponseEntity.noContent().build();
     }

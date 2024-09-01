@@ -20,6 +20,21 @@ import java.util.Objects;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RentalAlreadyPaidException.class)
+    public ResponseEntity<RestErrorResponse> handleRentalAlreadyPaidException(RentalAlreadyPaidException e) {
+        int statusCode = HttpStatus.CONFLICT.value();
+
+        RestErrorResponse error = new RestErrorResponse(
+                statusCode,
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(statusCode).body(error);
+    }
+
+
+
     @ExceptionHandler(FieldAlreadyInUseException.class)
     public ResponseEntity<RestErrorResponse> handleFieldAlreadyInUseException(FieldAlreadyInUseException e) {
         int statusCode = HttpStatus.BAD_REQUEST.value();

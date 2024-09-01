@@ -1,8 +1,7 @@
 package com.squad11.locadora.dtos;
 
 import com.squad11.locadora.entities.Carrinho;
-import com.squad11.locadora.entities.CarrinhoCarro;
-import com.squad11.locadora.entities.Carro;
+import com.squad11.locadora.entities.ItemCarrinho;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -14,18 +13,18 @@ public record ResponseCarrinhoDTO(
 
         MotoristaDTO motorista,
 
-        List<ResponseCarrinhoCarroDTO> carros,
+        List<ResponseitemCarrinhoDTO> carros,
 
         BigDecimal total
 ) {
 
     public static ResponseCarrinhoDTO from(Carrinho carrinho) {
-        List<ResponseCarrinhoCarroDTO> carros = carrinho.getCarrinhoCarros()
-                .stream().map(ResponseCarrinhoCarroDTO::from).toList();
+        List<ResponseitemCarrinhoDTO> carros = carrinho.getItemCarrinhos()
+                .stream().map(ResponseitemCarrinhoDTO::from).toList();
 
-        BigDecimal total = carrinho.getCarrinhoCarros()
+        BigDecimal total = carrinho.getItemCarrinhos()
                 .stream()
-                .map(CarrinhoCarro::getValorTotal)
+                .map(ItemCarrinho::getValorTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return  ResponseCarrinhoDTO.builder()

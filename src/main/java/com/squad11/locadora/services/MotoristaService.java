@@ -10,7 +10,9 @@ public interface MotoristaService {
 
     List<Aluguel>  showAlugueis(Long motoristaId);
 
+    Motorista findByIdAtivo(Long motoristaId);
+
     String create(CreateMotoristaDTO createMotoristaDTO);
 
-    Motorista findById(Long id);
+    Motorista findById(Long motoristaId);
 }

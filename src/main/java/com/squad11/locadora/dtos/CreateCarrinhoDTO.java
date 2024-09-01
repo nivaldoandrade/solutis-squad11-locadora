@@ -7,6 +7,6 @@ public record CreateCarrinhoDTO(
         @NotNull(message = "O ID do motorista é obrigátorio")
         Long motoristaId,
 
-        @Valid CreateCarrinhoCarroDTO carro
+        @Valid CreateItemCarrinhoDTO carro
 ) {
 }
