@@ -1,5 +1,6 @@
 package com.squad11.locadora.services.impl;
 
+import com.squad11.locadora.dtos.CreateAluguelDTO;
 import com.squad11.locadora.entities.*;
 import com.squad11.locadora.exceptions.CarNotAvailableForRentalException;
 import com.squad11.locadora.exceptions.RentNotFoundException;
@@ -36,7 +37,7 @@ public class AluguelServiceImpl implements AluguelService {
 
     @Transactional
     @Override
-    public List<Aluguel> create(Long carrinhoId) {
+    public List<Aluguel> create(Long carrinhoId,  CreateAluguelDTO createAluguelDTO) {
         Carrinho carrinho = carrinhoService.show(carrinhoId);
 
         Motorista motorista = carrinho.getMotorista();
@@ -55,8 +56,7 @@ public class AluguelServiceImpl implements AluguelService {
             aluguel.setCarro(c.getCarro());
             aluguel.setApolice(apolice);
             aluguel.setValorTotal(c.getValorTotal());
-
-//            c.getCarro().setStatus(StatusCarroEnum.RESERVADO);
+            aluguel.setAceitouTermos(createAluguelDTO.aceitouTermos());
 
             alugueis.add(aluguel);
         });
