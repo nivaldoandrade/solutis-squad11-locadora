@@ -84,6 +84,8 @@ public class CarrinhoServiceImpl implements CarrinhoService {
             throw new CarInCartNotFoundException();
         }
 
+        carrinho.removeItemCarrinho(itemCarrinho.get());
+
         itemCarrinhoRepository.delete(itemCarrinho.get());
     }
 
@@ -130,7 +132,8 @@ public class CarrinhoServiceImpl implements CarrinhoService {
                 apolice
         );
 
-        carrinho.getItemCarrinhos().add(itemCarrinho);
+
+        carrinho.addItemCarrinho(itemCarrinho);
 
         itemCarrinhoRepository.save(itemCarrinho);
     }

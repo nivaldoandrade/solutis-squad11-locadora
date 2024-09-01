@@ -29,24 +29,4 @@ public class AluguelController {
 
         return ResponseEntity.ok().body(responseAluguelDTO);
     }
-
-    @PostMapping("/{carrinhoId}")
-    public ResponseEntity<?> create(
-            @PathVariable Long carrinhoId,
-            @RequestBody @Validated CreateAluguelDTO createAluguelDTO
-    ) {
-
-        List<Aluguel> aluguel = aluguelService.create(carrinhoId, createAluguelDTO);
-
-
-        return ResponseEntity.ok(aluguel);
-    }
-
-    @PostMapping("/{aluguelId}/pagamento-cartao")
-    public ResponseEntity<?> paymentCard(@PathVariable Long aluguelId) {
-
-        aluguelService.payment(aluguelId);
-
-        return ResponseEntity.ok("Pagamento realizado com sucesso!");
-    }
 }

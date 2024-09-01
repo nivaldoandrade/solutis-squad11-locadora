@@ -4,6 +4,7 @@ import com.squad11.locadora.entities.Carro;
 import com.squad11.locadora.entities.CategoriaEnum;
 import com.squad11.locadora.entities.StatusCarroEnum;
 import com.squad11.locadora.exceptions.CarNotAvailableException;
+import com.squad11.locadora.exceptions.CarNotAvailableForRentalException;
 import com.squad11.locadora.exceptions.CartNotFoundException;
 import com.squad11.locadora.exceptions.EntityNotFoundException;
 import com.squad11.locadora.repositories.CarroRepository;
@@ -59,6 +60,15 @@ public class CarroServiceImpl implements CarroService {
         }
 
         return carro;
+    }
+
+    @Override
+    public void checkCarroDisponivel(Long carroId) {
+        Carro carro = this.findById(carroId);
+
+        if(carro.getStatus().equals(StatusCarroEnum.RESERVADO)) {
+            throw new CarNotAvailableForRentalException(carroId);
+        }
     }
 
 

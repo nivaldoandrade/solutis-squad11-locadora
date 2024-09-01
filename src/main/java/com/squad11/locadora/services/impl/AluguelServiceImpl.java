@@ -43,7 +43,7 @@ public class AluguelServiceImpl implements AluguelService {
 
     @Transactional
     @Override
-    public List<Aluguel> create(Long carrinhoId,  CreateAluguelDTO createAluguelDTO) {
+    public List<Aluguel> create(Long carrinhoId, CreateAluguelDTO createAluguelDTO) {
         Carrinho carrinho = carrinhoService.showCarrinhoById(carrinhoId);
 
         Motorista motorista = carrinho.getMotorista();
@@ -51,7 +51,7 @@ public class AluguelServiceImpl implements AluguelService {
         List<Aluguel> alugueis = new ArrayList<>();
 
         carrinho.getItemCarrinhos().forEach(c -> {
-            checkAvailabilityForRental(c.getCarro().getId());
+            carroService.checkCarroDisponivel(c.getCarro().getId());
             Apolice apolice = checkAvailabilityPolicy(c.getApolice().getId());
 
             Aluguel aluguel = new Aluguel();
@@ -73,33 +73,9 @@ public class AluguelServiceImpl implements AluguelService {
         return aluguelRepository.saveAll(alugueis);
     }
 
-    @Override
-    public void payment(Long aluguelId) {
-        Aluguel aluguel = this.findById(aluguelId);
-
-        if(aluguel.getStatus().equals(StatusAluguelEnum.CONCLUIDO)) {
-            throw new RentalAlreadyPaidException();
-        }
-        checkAvailabilityForRental(aluguel.getCarro().getId());
-
-        aluguel.setStatus(StatusAluguelEnum.CONCLUIDO);
-        aluguel.getCarro().setStatus(StatusCarroEnum.RESERVADO);
-
-        aluguelRepository.save(aluguel);
-    }
-
-
     private Aluguel findById(Long id) {
         return aluguelRepository.findById(id)
                 .orElseThrow(RentNotFoundException::new);
-    }
-
-    private void checkAvailabilityForRental(Long carroId) {
-        Carro carro = carroService.findById(carroId);
-
-        if(carro.getStatus().equals(StatusCarroEnum.RESERVADO)) {
-            throw new CarNotAvailableForRentalException();
-        }
     }
 
     private Apolice checkAvailabilityPolicy(Long apoliceId) {

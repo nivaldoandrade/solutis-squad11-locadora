@@ -8,7 +8,6 @@ import java.util.List;
 public interface AluguelService {
 
     Aluguel show(Long aluguelId);
-    List<Aluguel> create(Long carrinhoId, CreateAluguelDTO createAluguelDTO);
 
-    void payment(Long aluguelId);
+    List<Aluguel> create(Long carrinhoId, CreateAluguelDTO createAluguelDTO);
 }
