@@ -21,12 +21,16 @@ public record CarroDTO(
 
         BigDecimal valorDiaria,
 
+        String foto,
+
         ModeloDTO modelo,
 
         List<AcessorioDTO> acessorios
 ) {
 
     public static CarroDTO from(Carro carro) {
+
+
         List<AcessorioDTO> acessorioDTOS = carro.getAcessorios().stream()
                 .map(AcessorioDTO::from).toList();
 
@@ -37,6 +41,7 @@ public record CarroDTO(
                 .cor(carro.getCor())
                 .status(carro.getStatus())
                 .valorDiaria(carro.getValorDiaria())
+                .foto(carro.getFoto())
                 .modelo(ModeloDTO.from(carro.getModelo()))
                 .acessorios(acessorioDTOS)
                 .build();
