@@ -1,82 +1,102 @@
 package com.squad11.locadora.controllers;
 
 import com.squad11.locadora.dtos.*;
-
-import com.squad11.locadora.entities.Aluguel;
-import com.squad11.locadora.entities.Motorista;
-import com.squad11.locadora.services.MotoristaService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
+@Tag(name = "Motoristas", description = "API para gerenciamento de motoristas")
+@RequestMapping("/api/v1/motoristas")
+public interface MotoristaController {
 
-@RestController
-@RequestMapping("/api/motoristas")
-public class MotoristaController {
-
-    @Autowired
-    private MotoristaService motoristaService;
-
+    @Operation(
+            summary = "Listar alugueis de um motorista",
+            description = "Retorna uma lista de alugueis associados a um motorista, com suporte a paginação e ordenação.",
+            parameters = {
+                    @Parameter(name = "page", description = "Número da página para paginação", example = "0"),
+                    @Parameter(name = "size", description = "Número de itens por página", example = "10"),
+                    @Parameter(name = "orderBy", description = "Ordenar por ascendente ou descendente", example = "asc")
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Lista de alugueis recuperada com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ListAlugueisMotoristaDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Motorista não encontrado", content = @Content)
+            }
+    )
     @GetMapping("{motoristaId}/alugueis")
-    public ResponseEntity<ListAlugueisMotoristaDTO> showAlugueis(
+    ResponseEntity<ListAlugueisMotoristaDTO> showAlugueis(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "orderBy", defaultValue = "asc") String orderBy,
             @PathVariable Long motoristaId
-    ) {
-        Sort.Direction direction = "desc".equalsIgnoreCase(orderBy)
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
+    );
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "dataPedido"));
 
-        Page<Aluguel> alugueis = motoristaService.listAlugueis(pageable,motoristaId);
-
-        ListAlugueisMotoristaDTO aluguelMotoristaDTOS = ListAlugueisMotoristaDTO.from(alugueis);
-
-        return ResponseEntity.ok().body(aluguelMotoristaDTOS);
-    }
-
+    @Operation(
+            summary = "Obter detalhes do motorista",
+            description = "Retorna as informações detalhadas de um motorista com base no ID fornecido.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Detalhes do motorista recuperados com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = MotoristaDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Motorista não encontrado", content = @Content)
+            }
+    )
     @GetMapping("{motoristaId}")
-    public ResponseEntity<MotoristaDTO> show(@PathVariable Long motoristaId) {
-        Motorista motorista = motoristaService.show(motoristaId);
+    ResponseEntity<MotoristaDTO> show(@PathVariable Long motoristaId);
 
-        MotoristaDTO motoristaDTO = MotoristaDTO.from(motorista);
 
-        return ResponseEntity.ok(motoristaDTO);
-    }
-
+    @Operation(
+            summary = "Obter detalhes de um aluguel específico de um motorista",
+            description = "Retorna as informações detalhadas de um aluguel específico associado a um motorista.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Detalhes do aluguel recuperados com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ResponseAluguelMotoristaDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Motorista ou aluguel não encontrado", content = @Content)
+            }
+    )
     @GetMapping("{motoristaId}/{aluguelId}")
-    public ResponseEntity<ResponseAluguelMotoristaDTO> showAluguel(
+    ResponseEntity<ResponseAluguelMotoristaDTO> showAluguel(
             @PathVariable Long motoristaId,
             @PathVariable Long aluguelId
-    ) {
-        Aluguel aluguel = motoristaService.showAluguel(motoristaId, aluguelId);
+    );
 
-        ResponseAluguelMotoristaDTO aluguelMotoristaDTO = ResponseAluguelMotoristaDTO.from(aluguel);
 
-        return ResponseEntity.ok(aluguelMotoristaDTO);
-    }
-
+    @Operation(
+            summary = "Criar um novo motorista",
+            description = "Cria um novo motorista com base nas informações fornecidas.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Motorista criado com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ResponseCreateMotoristaDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
+            }
+    )
     @PostMapping
-    public ResponseEntity<ResponseCreateMotoristaDTO> create(@RequestBody CreateMotoristaDTO createMotoristaDTO) {
-
-        String token = motoristaService.create(createMotoristaDTO);
-
-        URI linkConfirmacaoURI = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/api/confirmar-cadastro/")
-                .path(token)
-                .build().toUri();
-
-        ResponseCreateMotoristaDTO motoristaDTO = ResponseCreateMotoristaDTO.from(linkConfirmacaoURI);
-
-        return ResponseEntity.created(linkConfirmacaoURI).body(motoristaDTO);
-    }
+    ResponseEntity<ResponseCreateMotoristaDTO> create(
+            @RequestBody CreateMotoristaDTO createMotoristaDTO
+    );
 }

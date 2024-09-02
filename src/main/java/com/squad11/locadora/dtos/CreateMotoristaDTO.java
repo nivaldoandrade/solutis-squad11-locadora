@@ -4,6 +4,7 @@ import com.squad11.locadora.constraints.EnumSexoPattern;
 import com.squad11.locadora.constraints.ValidDateAndMinAge;
 import com.squad11.locadora.entities.Motorista;
 import com.squad11.locadora.entities.SexoEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -31,6 +32,7 @@ public record CreateMotoristaDTO(
         )
         String email,
 
+        @Schema(example = "MASCULINO ou FEMININO")
         @EnumSexoPattern()
         String sexo,
 

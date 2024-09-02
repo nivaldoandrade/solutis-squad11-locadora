@@ -2,59 +2,76 @@ package com.squad11.locadora.controllers;
 
 import com.squad11.locadora.dtos.CreateAluguelDTO;
 import com.squad11.locadora.dtos.ResponsePedidoDTO;
-import com.squad11.locadora.entities.Pedido;
-import com.squad11.locadora.repositories.PedidoRepository;
-import com.squad11.locadora.services.AluguelService;
-import com.squad11.locadora.services.PedidoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Pedidos", description = "API para gerenciamento de pedidos")
+@RequestMapping("/api/v1/pedidos")
+public interface PedidoController {
 
-@RestController
-@RequestMapping("/api/pedidos")
-public class PedidoController {
-
-    @Autowired
-    AluguelService aluguelService;
-
-    @Autowired
-    PedidoRepository pedidoRepository;
-
-    @Autowired
-    PedidoService pedidoService;
-
+    @Operation(
+            summary = "Obter detalhes do pedido",
+            description = "Retorna as informações detalhadas de um pedido com base no ID fornecido.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Detalhes do pedido recuperados com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ResponsePedidoDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Pedido não encontrado", content = @Content)
+            }
+    )
     @GetMapping("{pedidoId}")
-    public ResponseEntity<ResponsePedidoDTO> show(@PathVariable Long pedidoId) {
-        Pedido pedido = pedidoService.show(pedidoId);
+    ResponseEntity<ResponsePedidoDTO> show(
+            @Parameter(description = "ID do pedido", required = true) @PathVariable Long pedidoId
+    );
 
-        ResponsePedidoDTO responsePedidoDTO = ResponsePedidoDTO.from(pedido);
-
-        return ResponseEntity.ok(responsePedidoDTO);
-    }
-
+    @Operation(
+            summary = "Criar um novo pedido",
+            description = "Cria um novo pedido com base no carrinho e nos detalhes do aluguel fornecidos.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Pedido criado com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ResponsePedidoDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
+            }
+    )
     @PostMapping("{carrinhoId}")
-    public ResponseEntity<ResponsePedidoDTO> create(
-            @PathVariable Long carrinhoId,
-            @RequestBody @Validated CreateAluguelDTO createAluguelDTO
-    ) {
+    ResponseEntity<ResponsePedidoDTO> create(
+            @Parameter(description = "ID do carrinho", required = true)  @PathVariable Long carrinhoId,
+            @Parameter(description = "Detalhes do aluguel", required = true) @RequestBody @Validated CreateAluguelDTO createAluguelDTO
+    );
 
-        Pedido pedido = pedidoService.create(carrinhoId, createAluguelDTO);
-
-        ResponsePedidoDTO responsePedidoDTO = ResponsePedidoDTO.from(pedido);
-
-        return ResponseEntity.ok(responsePedidoDTO);
-    }
-
-
+    @Operation(
+            summary = "Processar pagamento com cartão",
+            description = "Processa o pagamento com cartão para um pedido específico.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Pagamento processado com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ResponsePedidoDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Pedido não encontrado", content = @Content),
+                    @ApiResponse(responseCode = "400", description = "Erro ao processar pagamento", content = @Content)
+            }
+    )
     @PostMapping("{pedidoId}/pagamento-cartao")
-    public ResponseEntity<ResponsePedidoDTO> paymentCard(@PathVariable Long pedidoId) {
-        Pedido pedido = pedidoService.payment(pedidoId);
-
-        ResponsePedidoDTO responsePedidoDTO = ResponsePedidoDTO.from(pedido);
-
-        return ResponseEntity.ok(responsePedidoDTO);
-    }
-
+    ResponseEntity<ResponsePedidoDTO> paymentCard(
+            @Parameter(description = "ID do pedido", required = true) @PathVariable Long pedidoId
+    );
 }

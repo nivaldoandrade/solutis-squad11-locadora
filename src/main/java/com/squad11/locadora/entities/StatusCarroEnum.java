@@ -3,7 +3,6 @@ package com.squad11.locadora.entities;
 public enum StatusCarroEnum {
 
     DISPONIVEL,
-    NO_CARRINHO,
     RESERVADO;
 
     public static StatusCarroEnum fromString(String value) {

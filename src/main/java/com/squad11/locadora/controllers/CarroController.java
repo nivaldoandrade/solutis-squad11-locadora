@@ -3,74 +3,95 @@ package com.squad11.locadora.controllers;
 import com.squad11.locadora.dtos.CarroDTO;
 import com.squad11.locadora.dtos.CreateCarroDTO;
 import com.squad11.locadora.dtos.ListCarroDTO;
-import com.squad11.locadora.entities.Carro;
-import com.squad11.locadora.services.CarroService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/carros")
-public class CarroController {
+@Tag(name = "Carros", description = "API para gerenciamento de carros")
+@RequestMapping("/api/v1/carros")
+public interface CarroController {
 
-    @Autowired
-    private CarroService carroService;
-
+    @Operation(
+            summary = "Listar carros disponíveis",
+            description = "Retorna uma lista de carros disponíveis com suporte a paginação, ordenação, categorias e acessórios.",
+            parameters = {
+                    @Parameter(name = "page", description = "Número da página para paginação", example = "0"),
+                    @Parameter(name = "size", description = "Número de itens por página", example = "10"),
+                    @Parameter(name = "orderBy", description = "Ordenar por ascendente ou descendente", example = "asc"),
+                    @Parameter(
+                            name = "categorias",
+                            description = "Lista de categorias para filtrar os carros",
+                            example = "[\"SEDAN_MEDIO\", \"MINIVAN\"]"
+                    ),
+                    @Parameter(
+                            name = "acessorios",
+                            description = "Lista de acessórios para filtrar os carros",
+                            example = "[\"Ar condicionado\", \"Airbag\"]"
+                    )
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Lista de carros disponíveis recuperada com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ListCarroDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Parâmetros inválidos", content = @Content)
+            }
+    )
     @GetMapping("/disponiveis")
-    public ResponseEntity<ListCarroDTO> getCarrosDisponiveis(
+    ResponseEntity<ListCarroDTO> getCarrosDisponiveis(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "orderBy", defaultValue = "asc") String orderBy,
             @RequestParam(name = "categorias",required = false) List<String> categorias,
             @RequestParam(name = "acessorios", required = false) List<String> acessorios
-    ) {
-        Sort.Direction direction = "desc".equalsIgnoreCase(orderBy)
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
+    );
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "modelo.descricao"));
-
-        Page<Carro> carros = carroService.list(pageable, categorias, acessorios);
-
-        ListCarroDTO listCarroDTO = ListCarroDTO.from(carros);
-
-        return ResponseEntity.ok().body(listCarroDTO);
-    }
-
+    @Operation(
+            summary = "Obter detalhes de um carro",
+            description = "Retorna as informações detalhadas de um carro com base no ID fornecido.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Detalhes do carro recuperados com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = CarroDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Carro não encontrado", content = @Content)
+            }
+    )
     @GetMapping("/disponiveis/{id}")
-    public ResponseEntity<CarroDTO> show(@PathVariable Long id) {
-        Carro carro = carroService.findByIdDisponivel(id);
+    ResponseEntity<CarroDTO> show(
+            @Parameter(description = "ID do carro", required = true) @PathVariable Long id
+    );
 
-        CarroDTO carroDTO = CarroDTO.from(carro);
-
-        return ResponseEntity.ok(carroDTO);
-    }
-
+    @Operation(
+            summary = "Criar um novo carro",
+            description = "Cria um novo carro com base nas informações fornecidas.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Carro criado com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = CarroDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
+            }
+    )
     @PostMapping
-    public ResponseEntity<?> create(
+    ResponseEntity<CarroDTO> create(
             @RequestBody @Validated CreateCarroDTO createCarroDTO
-    ) {
-
-        Carro carro = carroService.create(createCarroDTO);
-
-        CarroDTO carroDTO = CarroDTO.from(carro);
-
-        URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(carro.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(carroDTO);
-    }
-
-
-
+    );
 }

@@ -1,70 +1,83 @@
 package com.squad11.locadora.controllers;
 
-import com.squad11.locadora.dtos.*;
-import com.squad11.locadora.entities.ModeloCarro;
-import com.squad11.locadora.services.ModeloCarroService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import com.squad11.locadora.dtos.CreateModeloCarroDTO;
+import com.squad11.locadora.dtos.ListModeloCarroDTO;
+import com.squad11.locadora.dtos.ModeloDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
+@Tag(name = "Modelos de Carros", description = "API para gerenciamento de modelos de carros")
+@RequestMapping("/api/v1/modelos-carros")
+public interface ModeloCarroController {
 
-@RestController
-@RequestMapping("/api/modelos-carros")
-public class ModeloCarroController {
-
-    @Autowired
-    ModeloCarroService modeloCarroService;
-
+    @Operation(
+            summary = "Listar modelos de carros",
+            description = "Retorna uma lista de modelos de carros com suporte a paginação e ordenação.",
+            parameters = {
+                    @Parameter(name = "page", description = "Número da página para paginação", example = "0"),
+                    @Parameter(name = "size", description = "Número de itens por página", example = "10"),
+                    @Parameter(name = "orderBy", description = "Ordenar por ascendente ou descendente", example = "asc")
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Lista de modelos de carros recuperada com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ListModeloCarroDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Parâmetros inválidos", content = @Content)
+            }
+    )
     @GetMapping
-    public ResponseEntity<ListModeloCarroDTO> list(
+    ResponseEntity<ListModeloCarroDTO> list(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size,
             @RequestParam(value = "orderBy", defaultValue = "asc") String orderBy
-    ) {
-        Sort.Direction sortDirection = "desc".equalsIgnoreCase(orderBy)
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
+    );
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "descricao"));
-
-        Page<ModeloCarro> modeloCarros = modeloCarroService.list(pageable);
-
-        ListModeloCarroDTO listModeloCarroDTO = ListModeloCarroDTO.from(modeloCarros);
-
-
-        return ResponseEntity.ok(listModeloCarroDTO);
-    }
-
+    @Operation(
+            summary = "Obter detalhes do modelo de carro",
+            description = "Retorna as informações detalhadas de um modelo de carro com base no ID fornecido.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Detalhes do modelo de carro recuperados com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ModeloDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Modelo de carro não encontrado", content = @Content)
+            }
+    )
     @GetMapping("{modeloCarroId}")
-    public ResponseEntity<ModeloDTO> show(@PathVariable Long modeloCarroId) {
-        ModeloCarro modeloCarro = modeloCarroService.show(modeloCarroId);
+    ResponseEntity<ModeloDTO> show(
+            @Parameter(description = "ID do modelo de carro", required = true) @PathVariable Long modeloCarroId
+    );
 
-        ModeloDTO modeloDTO = ModeloDTO.from(modeloCarro);
-
-        return ResponseEntity.ok(modeloDTO);
-    }
-
-
+    @Operation(
+            summary = "Criar um novo modelo de carro",
+            description = "Cria um novo modelo de carro com base nas informações fornecidas.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Modelo de carro criado com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ModeloDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
+            }
+    )
     @PostMapping
-    public ResponseEntity<ModeloDTO> create(
+    ResponseEntity<ModeloDTO> create(
             @RequestBody @Validated CreateModeloCarroDTO createModeloCarroDTO
-    ) {
-
-        ModeloCarro modeloCarro = modeloCarroService.create(createModeloCarroDTO);
-
-        ModeloDTO modeloDTO = ModeloDTO.from(modeloCarro);
-
-        URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(modeloCarro.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(modeloDTO);
-    }
+    );
 }

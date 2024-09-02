@@ -3,69 +3,81 @@ package com.squad11.locadora.controllers;
 import com.squad11.locadora.dtos.AcessorioDTO;
 import com.squad11.locadora.dtos.CreateAcessorioDTO;
 import com.squad11.locadora.dtos.ListAcessorioDTO;
-import com.squad11.locadora.entities.Acessorio;
-import com.squad11.locadora.services.AcessorioService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
+@Tag(name = "Acessórios", description = "API para gerenciamento de acessórios de carros")
+@RequestMapping("/api/v1/acessorios")
+public interface AcessorioController {
 
-@RestController
-@RequestMapping("/api/acessorios")
-public class AcessorioController {
-
-    @Autowired
-    AcessorioService acessorioService;
-
+    @Operation(
+            summary = "Listar acessórios",
+            description = "Retorna uma lista de acessórios com suporte a paginação e ordenação.",
+            parameters = {
+                    @Parameter(name = "page", description = "Número da página para paginação", example = "0"),
+                    @Parameter(name = "size", description = "Número de itens por página", example = "10"),
+                    @Parameter(name = "orderBy", description = "Ordenar por ascendente ou descendente", example = "asc")
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Lista de acessórios recuperada com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ListAcessorioDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Parâmetros inválidos", content = @Content)
+            }
+    )
     @GetMapping
-    public ResponseEntity<ListAcessorioDTO> list(
+    ResponseEntity<ListAcessorioDTO> list(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size,
             @RequestParam(value = "orderBy", defaultValue = "asc") String orderBy
-    ) {
-        Sort.Direction sortDirection = "desc".equalsIgnoreCase(orderBy)
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
+    );
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "descricao"));
-
-        Page<Acessorio> acessorios = acessorioService.list(pageable);
-
-        ListAcessorioDTO acessorioDTO = ListAcessorioDTO.from(acessorios);
-
-        return ResponseEntity.ok(acessorioDTO);
-    }
-
+    @Operation(
+            summary = "Obter detalhes de um acessório",
+            description = "Retorna as informações detalhadas de um acessório com base no ID fornecido.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Detalhes do acessório recuperados com sucesso",
+                            content = @Content(schema = @Schema(implementation = AcessorioDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Acessório não encontrado", content = @Content)
+            }
+    )
     @GetMapping("{acessorioId}")
-    public ResponseEntity<AcessorioDTO> show(@PathVariable Long acessorioId) {
-        Acessorio acessorio = acessorioService.show(acessorioId);
-
-        AcessorioDTO acessorioDTO = AcessorioDTO.from(acessorio);
-
-        return ResponseEntity.ok(acessorioDTO);
-    }
+    ResponseEntity<AcessorioDTO> show(
+            @Parameter(description = "ID do acessório", required = true) @PathVariable Long acessorioId
+    );
 
 
+    @Operation(
+            summary = "Criar um novo acessório",
+            description = "Cria um novo acessório com base nas informações fornecidas.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Acessório criado com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = AcessorioDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Dados inválidos")
+            }
+    )
     @PostMapping
-    public ResponseEntity<AcessorioDTO> create(
+    ResponseEntity<AcessorioDTO> create(
             @RequestBody @Validated CreateAcessorioDTO createAcessorioDTO
-    ) {
-
-        Acessorio acessorio = acessorioService.create(createAcessorioDTO);
-
-        AcessorioDTO acessorioDTO = AcessorioDTO.from(acessorio);
-
-        URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(acessorio.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(acessorioDTO);
-    }
+    );
 }

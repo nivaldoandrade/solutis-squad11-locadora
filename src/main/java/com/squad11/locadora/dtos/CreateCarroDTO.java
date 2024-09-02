@@ -5,6 +5,7 @@ import com.squad11.locadora.entities.Acessorio;
 import com.squad11.locadora.entities.Carro;
 import com.squad11.locadora.entities.ModeloCarro;
 import com.squad11.locadora.entities.StatusCarroEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -27,6 +28,7 @@ public record CreateCarroDTO(
 
         List<Long> acessoriosId,
 
+        @Schema(example = "DISPONIVEL ou RESERVADO")
         @StatusCarroEnumPattern
         String status,
 
