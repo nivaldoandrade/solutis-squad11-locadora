@@ -22,15 +22,35 @@ public class DataDevolucaoAfterDataEntregaValidator
     @Override
     public boolean isValid(CreateItemCarrinhoDTO dto, ConstraintValidatorContext context) {
         try {
-            LocalDate dataEntrega = formatStringToDate(dto.dataInicio());
-            LocalDate dataDevolucao = formatStringToDate(dto.dataTermino());
+            LocalDate now = LocalDate.now();
+            LocalDate dataInicio = formatStringToDate(dto.dataInicio());
+            LocalDate dataTermino = formatStringToDate(dto.dataTermino());
+
+            if (dataInicio.isBefore(now)) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate("A data de inicio deve ser igual ou maior que a data atual")
+                        .addPropertyNode("dataInicio")
+                        .addConstraintViolation();
+
+                return false;
+            }
+
+            if (dataTermino.isBefore(now)) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate("A data de termino deve ser igual ou maior que a data atual")
+                        .addPropertyNode("dataTermino")
+                        .addConstraintViolation();
+
+                return false;
+            }
+
 
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
                     .addPropertyNode(fieldName)
                     .addConstraintViolation();
 
-            return !dataDevolucao.isBefore(dataEntrega);
+            return !dataTermino.isBefore(dataInicio);
         } catch (Exception e) {
             return false;
         }
