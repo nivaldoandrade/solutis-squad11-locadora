@@ -1,6 +1,10 @@
 package com.squad11.locadora.specifications;
 
-import com.squad11.locadora.entities.*;
+import com.squad11.locadora.entities.carro.Acessorio;
+import com.squad11.locadora.entities.carro.Carro;
+import com.squad11.locadora.entities.carro.ModeloCarro;
+import com.squad11.locadora.entities.enums.CategoriaEnum;
+import com.squad11.locadora.entities.enums.StatusCarroEnum;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;

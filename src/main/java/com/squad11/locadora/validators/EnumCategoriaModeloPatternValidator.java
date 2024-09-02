@@ -1,7 +1,7 @@
 package com.squad11.locadora.validators;
 
 import com.squad11.locadora.constraints.EnumCategoriaModeloPattern;
-import com.squad11.locadora.entities.CategoriaEnum;
+import com.squad11.locadora.entities.enums.CategoriaEnum;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

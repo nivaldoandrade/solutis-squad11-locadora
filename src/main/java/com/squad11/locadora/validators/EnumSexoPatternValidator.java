@@ -1,7 +1,7 @@
 package com.squad11.locadora.validators;
 
 import com.squad11.locadora.constraints.EnumSexoPattern;
-import com.squad11.locadora.entities.SexoEnum;
+import com.squad11.locadora.entities.enums.SexoEnum;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

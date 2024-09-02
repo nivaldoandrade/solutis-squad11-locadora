@@ -187,6 +187,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<RestErrorResponse> handleException(Exception e) {
         int statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
 
+        e.printStackTrace();
+
         RestErrorResponse error = new RestErrorResponse(
                 statusCode,
                 e.getMessage(),

@@ -1,7 +1,7 @@
 package com.squad11.locadora.validators;
 
 import com.squad11.locadora.constraints.StatusCarroEnumPattern;
-import com.squad11.locadora.entities.StatusCarroEnum;
+import com.squad11.locadora.entities.enums.StatusCarroEnum;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
