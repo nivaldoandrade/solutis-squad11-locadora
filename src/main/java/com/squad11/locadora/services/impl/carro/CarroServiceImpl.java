@@ -8,6 +8,7 @@ import com.squad11.locadora.entities.enums.CategoriaEnum;
 import com.squad11.locadora.entities.enums.StatusCarroEnum;
 import com.squad11.locadora.exceptions.CarNotAvailableException;
 import com.squad11.locadora.exceptions.CarNotAvailableForRentalException;
+import com.squad11.locadora.exceptions.CarNotFoundException;
 import com.squad11.locadora.exceptions.CartNotFoundException;
 import com.squad11.locadora.repositories.carro.CarroRepository;
 import com.squad11.locadora.services.StorageService;
@@ -65,7 +66,7 @@ public class CarroServiceImpl implements CarroService {
 
     @Override
     public Carro findById(Long id) {
-        return carroRepository.findById(id).orElseThrow(CartNotFoundException::new);
+        return carroRepository.findById(id).orElseThrow(CarNotFoundException::new);
     }
 
     @Override
