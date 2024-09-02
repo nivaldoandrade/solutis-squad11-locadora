@@ -6,7 +6,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 public class CarroEntityListener {
 
-    @PostLoad
+//    @PostLoad
     @PostPersist
     void setPhotoUrl(Carro carro) {
         if(carro.getFoto() == null) {
