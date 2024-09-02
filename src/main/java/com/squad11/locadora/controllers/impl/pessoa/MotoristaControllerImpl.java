@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -78,7 +79,7 @@ public class MotoristaControllerImpl implements MotoristaController {
     }
 
     @Override
-    public ResponseEntity<CreateLinkMotoristaDTO> create(@RequestBody CreateMotoristaDTO createMotoristaDTO) {
+    public ResponseEntity<CreateLinkMotoristaDTO> create(@RequestBody @Validated CreateMotoristaDTO createMotoristaDTO) {
 
         String token = motoristaService.create(createMotoristaDTO);
 
