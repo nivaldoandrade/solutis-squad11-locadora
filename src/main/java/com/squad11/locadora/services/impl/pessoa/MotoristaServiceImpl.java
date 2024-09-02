@@ -43,44 +43,17 @@ public class MotoristaServiceImpl implements MotoristaService {
     }
 
     @Override
-    public Aluguel showAluguel(Long motoristaId, Long aluguelId) {
-        Motorista motorista = this.findById(motoristaId);
-
-        Optional<Aluguel> aluguel = aluguelRepository.findById(aluguelId);
-
-        if(aluguel.isEmpty()) {
-            throw new RentNotFoundException();
-        }
-
-        if(!aluguel.get().getMotorista().equals(motorista)) {
-            throw new RentNotFoundException();
-        }
-
-        return aluguel.get();
-    }
-
-    @Override
-    public Pedido showPedido(Long motoristaId, Long pedidoId) {
-        Motorista motorista = this.findById(motoristaId);
-
-        Optional<Pedido> pedido = pedidoRepository.findById(pedidoId);
-
-        if(pedido.isEmpty()) {
-            throw new OrderNotFoundException();
-        }
-
-        if(!pedido.get().getMotorista().equals(motorista)) {
-            throw new OrderNotFoundException();
-        }
-
-        return pedido.get();
-    }
-
-    @Override
     public Page<Aluguel> listAlugueis(Pageable pageable, Long motoristaId) {
         Motorista motorista = this.findById(motoristaId);
 
         return aluguelRepository.findAllByMotorista(pageable, motorista);
+    }
+
+    @Override
+    public Page<Pedido> listPedidos(Pageable pageable, Long motoristaId) {
+        Motorista motorista = this.findById(motoristaId);
+
+        return pedidoRepository.findAllByMotorista(pageable, motorista);
     }
 
     @Override

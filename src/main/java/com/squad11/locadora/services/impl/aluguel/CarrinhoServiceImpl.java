@@ -124,7 +124,10 @@ public class CarrinhoServiceImpl implements CarrinhoService {
 
         carrinho.getItemCarrinhos()
                 .stream()
-                .filter(i -> i.getApolice().equals(apolice))
+                .filter(i ->
+                        i.getApolice().equals(apolice)
+                        && !i.getCarro().getId().equals(carro.getId())
+                )
                 .findFirst()
                 .ifPresent(item -> {
                     throw new PolicyAlreadyInUseException(apolice.getId());

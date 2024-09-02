@@ -11,11 +11,9 @@ public interface MotoristaService {
 
     Motorista show(Long motoristaId);
 
-    Aluguel showAluguel(Long motoristaId, Long aluguelId);
-
-    Pedido showPedido(Long motoristaId, Long pedidoId);
-
     Page<Aluguel> listAlugueis(Pageable pageable, Long motoristaId);
+
+    Page<Pedido> listPedidos(Pageable pageable, Long motoristaId);
 
     Motorista findByIdAtivo(Long motoristaId);
 

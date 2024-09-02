@@ -2,6 +2,7 @@ package com.squad11.locadora.controllers.impl.aluguel;
 
 import com.squad11.locadora.controllers.aluguel.AluguelController;
 import com.squad11.locadora.dtos.aluguel.AluguelDTO;
+import com.squad11.locadora.dtos.aluguel.AluguelMotoristaDTO;
 import com.squad11.locadora.entities.aluguel.Aluguel;
 import com.squad11.locadora.services.aluguel.AluguelService;
 import org.springframework.beans.factory.annotation.Autowired;

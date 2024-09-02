@@ -1,7 +1,6 @@
 package com.squad11.locadora.controllers.pessoa;
 
-import com.squad11.locadora.dtos.aluguel.AluguelMotoristaDTO;
-import com.squad11.locadora.dtos.aluguel.PedidoDTO;
+import com.squad11.locadora.dtos.aluguel.request.ListPedidoMotoristaDTO;
 import com.squad11.locadora.dtos.pessoa.MotoristaDTO;
 import com.squad11.locadora.dtos.pessoa.request.CreateLinkMotoristaDTO;
 import com.squad11.locadora.dtos.pessoa.request.CreateMotoristaDTO;
@@ -48,6 +47,33 @@ public interface MotoristaController {
 
 
     @Operation(
+            summary = "Listar pedidos de um motorista",
+            description = "Retorna uma lista de pedidos associados a um motorista, com suporte a paginação e ordenação.",
+            parameters = {
+                    @Parameter(name = "page", description = "Número da página para paginação", example = "0"),
+                    @Parameter(name = "size", description = "Número de itens por página", example = "10"),
+                    @Parameter(name = "orderBy", description = "Ordenar por ascendente ou descendente", example = "asc")
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Lista de pedidos recuperada com sucesso",
+                            content = @Content(
+                                    schema = @Schema(implementation = ListPedidoMotoristaDTO.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Motorista não encontrado", content = @Content)
+            }
+    )
+    @GetMapping("{motoristaId}/pedidos")
+    ResponseEntity<ListPedidoMotoristaDTO> showPedidos(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "orderBy", defaultValue = "asc") String orderBy,
+            @PathVariable Long motoristaId
+    );
+
+    @Operation(
             summary = "Obter detalhes do motorista",
             description = "Retorna as informações detalhadas de um motorista com base no ID fornecido.",
             responses = {
@@ -63,34 +89,6 @@ public interface MotoristaController {
     )
     @GetMapping("{motoristaId}")
     ResponseEntity<MotoristaDTO> show(@PathVariable Long motoristaId);
-
-
-    @Operation(
-            summary = "Obter detalhes de um aluguel específico de um motorista",
-            description = "Retorna as informações detalhadas de um aluguel específico associado a um motorista.",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Detalhes do aluguel recuperados com sucesso",
-                            content = @Content(
-                                    schema = @Schema(implementation = AluguelMotoristaDTO.class)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "404", description = "Motorista ou aluguel não encontrado", content = @Content)
-            }
-    )
-    @GetMapping("/aluguel/{motoristaId}/{aluguelId}")
-    ResponseEntity<AluguelMotoristaDTO> showAluguel(
-            @PathVariable Long motoristaId,
-            @PathVariable Long aluguelId
-    );
-
-    @GetMapping("/pedido/{motoristaId}/{pedidoId}")
-    ResponseEntity<PedidoDTO> showPedido(
-            @PathVariable Long motoristaId,
-            @PathVariable Long pedidoId
-    );
-
 
     @Operation(
             summary = "Criar um novo motorista",

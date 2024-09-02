@@ -2,8 +2,7 @@ package com.squad11.locadora.controllers.impl.pessoa;
 
 import com.squad11.locadora.controllers.pessoa.MotoristaController;
 
-import com.squad11.locadora.dtos.aluguel.AluguelMotoristaDTO;
-import com.squad11.locadora.dtos.aluguel.PedidoDTO;
+import com.squad11.locadora.dtos.aluguel.request.ListPedidoMotoristaDTO;
 import com.squad11.locadora.dtos.pessoa.MotoristaDTO;
 import com.squad11.locadora.dtos.pessoa.request.CreateLinkMotoristaDTO;
 import com.squad11.locadora.dtos.pessoa.request.CreateMotoristaDTO;
@@ -50,36 +49,32 @@ public class MotoristaControllerImpl implements MotoristaController {
     }
 
     @Override
+    public ResponseEntity<ListPedidoMotoristaDTO> showPedidos(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "orderBy", defaultValue = "asc") String orderBy,
+            @PathVariable Long motoristaId
+    ) {
+        Sort.Direction direction = "desc".equalsIgnoreCase(orderBy)
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "id"));
+
+        Page<Pedido> pedidos = motoristaService.listPedidos(pageable,motoristaId);
+
+        ListPedidoMotoristaDTO listPedidoMotoristaDTO = ListPedidoMotoristaDTO.from(pedidos);
+
+        return ResponseEntity.ok().body(listPedidoMotoristaDTO);
+    }
+
+    @Override
     public ResponseEntity<MotoristaDTO> show(@PathVariable Long motoristaId) {
         Motorista motorista = motoristaService.show(motoristaId);
 
         MotoristaDTO motoristaDTO = MotoristaDTO.from(motorista);
 
         return ResponseEntity.ok(motoristaDTO);
-    }
-
-    @Override
-    public ResponseEntity<AluguelMotoristaDTO> showAluguel(
-            @PathVariable Long motoristaId,
-            @PathVariable Long aluguelId
-    ) {
-        Aluguel aluguel = motoristaService.showAluguel(motoristaId, aluguelId);
-
-        AluguelMotoristaDTO aluguelMotoristaDTO = AluguelMotoristaDTO.from(aluguel);
-
-        return ResponseEntity.ok(aluguelMotoristaDTO);
-    }
-
-    @Override
-    public ResponseEntity<PedidoDTO> showPedido(
-            @PathVariable Long motoristaId,
-            @PathVariable Long pedidoId
-    ) {
-        Pedido pedido = motoristaService.showPedido(motoristaId, pedidoId);
-
-        PedidoDTO pedidoDTO = PedidoDTO.from(pedido);
-
-        return ResponseEntity.ok(pedidoDTO);
     }
 
     @Override
