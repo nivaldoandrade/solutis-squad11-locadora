@@ -69,6 +69,6 @@ public class DataLoader implements CommandLineRunner {
         // Popula o banco de dados com carros, se estiver vazio
 
         listaModeloCarros.forEach(modelo -> carroRepository.save(
-                new Carro("OSDFKSDF9-IKJSDF", "LV5P-UON", "branco", BigDecimal.valueOf(100.0), modelo, StatusCarroEnum.DISPONIVEL, listaAcessorios)));
+                new Carro("OSDFKSDF9-IKJSDF", "LV5P-UON", "branco", BigDecimal.valueOf(100.0), "", modelo, StatusCarroEnum.DISPONIVEL, listaAcessorios)));
     }
 }

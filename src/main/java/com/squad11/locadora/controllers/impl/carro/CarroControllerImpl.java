@@ -5,12 +5,17 @@ import com.squad11.locadora.dtos.carro.CarroDTO;
 import com.squad11.locadora.dtos.carro.request.CreateCarroDTO;
 import com.squad11.locadora.dtos.carro.request.ListCarroDTO;
 import com.squad11.locadora.entities.carro.Carro;
+import com.squad11.locadora.services.StorageService;
 import com.squad11.locadora.services.carro.CarroService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +29,23 @@ public class CarroControllerImpl implements CarroController {
 
     @Autowired
     private CarroService carroService;
+
+    @Autowired
+    StorageService storageService;
+
+
+    @Override
+    public ResponseEntity<Resource> getImage(@PathVariable String imageNome) {
+
+        StorageService.RecoveredFile recoveredFile = storageService.getImage(imageNome);
+
+
+        MediaType contentType = imageNome.endsWith(".png") ? MediaType.IMAGE_PNG :  MediaType.IMAGE_JPEG;
+
+        return ResponseEntity.ok()
+                .contentType(contentType)
+                .body(recoveredFile.getResource());
+    }
 
     @Override
     public ResponseEntity<ListCarroDTO> getCarrosDisponiveis(
@@ -57,7 +79,7 @@ public class CarroControllerImpl implements CarroController {
 
     @Override
     public ResponseEntity<CarroDTO> create(
-            @RequestBody @Validated CreateCarroDTO createCarroDTO
+            @ModelAttribute @Validated CreateCarroDTO createCarroDTO
     ) {
 
         Carro carro = carroService.create(createCarroDTO);

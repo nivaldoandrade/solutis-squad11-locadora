@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
+@EntityListeners(CarroEntityListener.class)
 @Table(name = "carro")
 @Getter
 @Setter
@@ -30,6 +31,8 @@ public class Carro {
 
     @Column(name = "valor_diario", nullable = false)
     private BigDecimal valorDiaria;
+
+    private String foto;
 
 //    @JsonIgnore
 //    @OneToMany(mappedBy = "carro")
@@ -54,6 +57,7 @@ public class Carro {
             String placa,
             String cor,
             BigDecimal valorDiaria,
+            String foto,
             ModeloCarro modelo,
             StatusCarroEnum status,
             List<Acessorio> acessorios
@@ -63,6 +67,7 @@ public class Carro {
         this.placa = placa;
         this.cor = cor;
         this.valorDiaria = valorDiaria;
+        this.foto = foto;
         this.modelo = modelo;
         this.status = status;
         this.acessorios = acessorios;

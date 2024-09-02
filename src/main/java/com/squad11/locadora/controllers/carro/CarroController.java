@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,33 @@ import java.util.List;
 @Tag(name = "Carros", description = "API para gerenciamento de carros")
 @RequestMapping("/api/carros")
 public interface CarroController {
+
+    @Operation(
+            summary = "Obter imagem do carro",
+            description = "Este endpoint permite recuperar uma imagem do carro armazenada no servidor. A imagem é identificada pelo nome fornecido na URL.",
+            parameters = {
+                    @Parameter(
+                            name = "imageNome",
+                            description = "Nome da imagem a ser recuperada, incluindo a extensão do arquivo (por exemplo, 'carro123.jpg').",
+                            required = true,
+                            example = "carro123.png"
+                    )
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Imagem recuperada com sucesso",
+                            content = @Content(
+                                    mediaType = "image/png",  // Ajuste conforme o tipo de imagem, pode ser "image/png" ou outro
+                                    schema = @Schema(type = "string", format = "binary")
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Imagem não encontrada", content = @Content),
+                    @ApiResponse(responseCode = "500", description = "Erro no servidor", content = @Content)
+            }
+    )
+    @GetMapping("/imagem/{imageNome}")
+    public ResponseEntity<Resource> getImage(@PathVariable String imageNome);
 
     @Operation(
             summary = "Listar carros disponíveis",
@@ -78,20 +107,21 @@ public interface CarroController {
 
     @Operation(
             summary = "Criar um novo carro",
-            description = "Cria um novo carro com base nas informações fornecidas.",
+            description = "Este endpoint permite cadastrar um novo carro, incluindo o upload de uma imagem representativa do veículo.",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
-                            description = "Carro criado com sucesso",
+                            responseCode = "201",
+                            description = "Carro cadastrado com sucesso",
                             content = @Content(
                                     schema = @Schema(implementation = CarroDTO.class)
                             )
                     ),
-                    @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
+                    @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content),
+                    @ApiResponse(responseCode = "500", description = "Erro no servidor", content = @Content)
             }
     )
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<CarroDTO> create(
-            @RequestBody @Validated CreateCarroDTO createCarroDTO
+            @ModelAttribute @Validated CreateCarroDTO createCarroDTO
     );
 }

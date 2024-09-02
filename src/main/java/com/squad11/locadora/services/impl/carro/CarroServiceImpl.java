@@ -10,6 +10,7 @@ import com.squad11.locadora.exceptions.CarNotAvailableException;
 import com.squad11.locadora.exceptions.CarNotAvailableForRentalException;
 import com.squad11.locadora.exceptions.CartNotFoundException;
 import com.squad11.locadora.repositories.carro.CarroRepository;
+import com.squad11.locadora.services.StorageService;
 import com.squad11.locadora.services.carro.AcessorioService;
 import com.squad11.locadora.services.carro.CarroService;
 import com.squad11.locadora.services.carro.ModeloCarroService;
@@ -18,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,9 @@ public class CarroServiceImpl implements CarroService {
 
     @Autowired
     private AcessorioService acessorioService;
+
+    @Autowired
+    StorageService storageService;
 
     @Override
     public Page<Carro> list(Pageable pageable, List<String> categorias, List<String> acessorios) {
@@ -83,6 +89,7 @@ public class CarroServiceImpl implements CarroService {
         }
     }
 
+    @Transactional
     @Override
     public Carro create(CreateCarroDTO createCarroDTO) {
         ModeloCarro modeloCarro = modeloCarroService.show(createCarroDTO.modeloId());
@@ -93,7 +100,9 @@ public class CarroServiceImpl implements CarroService {
             acessorios = getAcessorios(createCarroDTO.acessoriosId());
         }
 
-        Carro carro = CreateCarroDTO.to(createCarroDTO, acessorios, modeloCarro);
+        String fotoName = handlePhoto(createCarroDTO.foto());
+
+        Carro carro = CreateCarroDTO.to(createCarroDTO, fotoName, acessorios, modeloCarro);
 
         return carroRepository.save(carro);
     }
@@ -107,6 +116,25 @@ public class CarroServiceImpl implements CarroService {
         });
 
         return acessorios;
+    }
+
+    private String handlePhoto(MultipartFile newFile) {
+        return handlePhoto(newFile, null);
+    }
+
+    private String handlePhoto(MultipartFile newFile, String existingPhotoName) {
+        if(newFile != null){
+            String newPhotoName = StorageService.generateFileName(newFile.getOriginalFilename());
+            storageService.saveFile(newFile, newPhotoName);
+
+            if(existingPhotoName != null) {
+                storageService.deleteFile(existingPhotoName);
+            }
+
+            return newPhotoName;
+        }
+
+        return existingPhotoName;
     }
 
 
