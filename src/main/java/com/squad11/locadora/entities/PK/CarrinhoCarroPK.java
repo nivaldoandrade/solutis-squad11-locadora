@@ -1,8 +1,8 @@
 package com.squad11.locadora.entities.PK;
 
 
-import com.squad11.locadora.entities.Carrinho;
-import com.squad11.locadora.entities.Carro;
+import com.squad11.locadora.entities.aluguel.Carrinho;
+import com.squad11.locadora.entities.carro.Carro;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;

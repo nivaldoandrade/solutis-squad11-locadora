@@ -1,7 +1,7 @@
 package com.squad11.locadora.validators;
 
 import com.squad11.locadora.constraints.DataDevolucaoAfterDataEntregaPattern;
-import com.squad11.locadora.dtos.CreateItemCarrinhoDTO;
+import com.squad11.locadora.dtos.aluguel.request.CreateItemCarrinhoDTO;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

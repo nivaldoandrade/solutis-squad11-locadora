@@ -1,13 +1,17 @@
 package com.squad11.locadora.utils;
 
-import com.squad11.locadora.entities.*;
-import com.squad11.locadora.repositories.AcessorioRepository;
-import com.squad11.locadora.repositories.CarroRepository;
-import com.squad11.locadora.repositories.FabricanteRepository;
-import com.squad11.locadora.repositories.ModeloCarroRepository;
+import com.squad11.locadora.entities.carro.Acessorio;
+import com.squad11.locadora.entities.carro.Carro;
+import com.squad11.locadora.entities.carro.Fabricante;
+import com.squad11.locadora.entities.carro.ModeloCarro;
+import com.squad11.locadora.entities.enums.CategoriaEnum;
+import com.squad11.locadora.entities.enums.StatusCarroEnum;
+import com.squad11.locadora.repositories.carro.AcessorioRepository;
+import com.squad11.locadora.repositories.carro.CarroRepository;
+import com.squad11.locadora.repositories.carro.FabricanteRepository;
+import com.squad11.locadora.repositories.carro.ModeloCarroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
